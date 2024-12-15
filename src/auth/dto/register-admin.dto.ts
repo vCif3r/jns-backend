@@ -1,7 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { LoginAuthDto } from './login-auth.dto';
 import { IsNotEmpty } from 'class-validator';
-import { Pais } from 'src/paises/entities/pais.entity';
 
 export class RegisterAdminDto extends PartialType(LoginAuthDto) {
     @IsNotEmpty()
@@ -13,5 +12,5 @@ export class RegisterAdminDto extends PartialType(LoginAuthDto) {
     @IsNotEmpty()
     telefono: string
     @IsNotEmpty()
-    pais: Pais
+    pais: string
 }

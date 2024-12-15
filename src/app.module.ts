@@ -3,11 +3,13 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClientesModule } from './clientes/clientes.module';
-import { PaisesModule } from './paises/paises.module';
 import { AuthModule } from './auth/auth.module';
 import { AbogadosModule } from './abogados/abogados.module';
 import { AdminsModule } from './admins/admins.module';
 import { DemandasModule } from './demandas/demandas.module';
+import { StatisticsModule } from './statistics/statistics.module';
+import { DenunciasModule } from './denuncias/denuncias.module';
+
 
 @Module({
   imports: [
@@ -22,11 +24,12 @@ import { DemandasModule } from './demandas/demandas.module';
       synchronize: true,
     }),
     ClientesModule,
-    PaisesModule,
     AuthModule,
     AbogadosModule,
     AdminsModule,
     DemandasModule,
+    StatisticsModule,
+    DenunciasModule,
   ],
   controllers: [AppController],
   providers: [AppService],

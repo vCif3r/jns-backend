@@ -1,6 +1,5 @@
 import { Exclude } from "class-transformer";
 import { Demanda } from "src/demandas/entities/demanda.entity";
-import { Pais } from "src/paises/entities/pais.entity";
 import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('abogados')
@@ -32,8 +31,8 @@ export class Abogado {
     @Column({type: 'enum',enum: ['Civil','Penal','Laboral'] })
     especialidad: string;
 
-    @Column({ type: 'date' })
-    fecha_ingreso: string;
+    // @Column()
+    // fecha_ingreso: Date;
 
     @Column({ type: 'enum', enum: ['Masculino','Femenino','Otro']})
     genero: string;
@@ -45,9 +44,9 @@ export class Abogado {
     createdAt: Date;
     @UpdateDateColumn({ type: 'timestamp' })
     updatedAt: Date;
-
-    @ManyToOne(() => Pais, pais => pais.clientes)
-    pais: Pais
+    
+    @Column()
+    pais: string
 
     @OneToMany(() => Demanda, demanda => demanda.abogado)
     demandas: Demanda[]

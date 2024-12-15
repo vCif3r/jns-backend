@@ -17,10 +17,16 @@ export class AbogadosController {
     return this.abogadosService.findAll();
   }
 
+  @Get('especialidad/count')
+  getAbogadosEspecialidad() {
+    return this.abogadosService.getAbogadosEspecialidad();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.abogadosService.findOne(+id);
   }
+
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateAbogadoDto: UpdateAbogadoDto) {

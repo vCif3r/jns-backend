@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { ClientesService } from './clientes.service';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
+import { Cliente } from './entities/cliente.entity';
 
 @Controller('clientes')
 export class ClientesController {
@@ -17,18 +18,29 @@ export class ClientesController {
     return this.clientesService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.clientesService.findOne(+id);
+  @Get('search')
+  async buscarClientes(@Query('cedula') cedula: string): Promise<Cliente[]> {
+    // Llamamos al servicio para obtener los clientes que coinciden con la cédula
+    return this.clientesService.obtenerClientesPorCedula(cedula);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateClienteDto: UpdateClienteDto) {
-    return this.clientesService.update(+id, updateClienteDto);
-  }
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.clientesService.findOne(+id);
+  // }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.clientesService.remove(+id);
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateClienteDto: UpdateClienteDto) {
+  //   return this.clientesService.update(+id, updateClienteDto);
+  // }
+
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.clientesService.remove(+id);
+  // }
+
+  @Get('tipos/count')
+  getUserTypes() {
+    return this.clientesService.getClientesTypes();
   }
 }

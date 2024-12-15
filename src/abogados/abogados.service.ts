@@ -19,6 +19,17 @@ export class AbogadosService {
     return this.abogadosRepository.find(); 
   }
 
+  getAbogadosEspecialidad() {
+    const results = this.abogadosRepository
+      .createQueryBuilder('abogado')
+      .select('abogado.especialidad')
+      .addSelect('COUNT(*)', 'total')
+      .groupBy('abogado.especialidad')
+      .getRawMany();
+    return results;
+ 
+  }
+
   findOne(id: number) {
     return `This action returns a #${id} abogado`;
   }

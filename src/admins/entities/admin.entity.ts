@@ -1,5 +1,4 @@
 import { Exclude } from "class-transformer";
-import { Pais } from "src/paises/entities/pais.entity";
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('admins')
@@ -33,6 +32,5 @@ export class Admin {
     @UpdateDateColumn({ type: 'timestamp' })
     updatedAt: Date;
 
-    @ManyToOne(() => Pais, pais => pais.clientes)
-    pais: Pais
+    pais: string
 }

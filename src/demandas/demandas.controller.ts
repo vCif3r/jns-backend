@@ -8,8 +8,8 @@ export class DemandasController {
   constructor(private readonly demandasService: DemandasService) {}
 
   @Post()
-  create(@Body() createDemandaDto: CreateDemandaDto) {
-    return this.demandasService.create(createDemandaDto);
+  create(@Body() createDemandaDto: CreateDemandaDto, cedula: string) {
+    return this.demandasService.create(createDemandaDto, cedula);
   }
 
   @Get()
