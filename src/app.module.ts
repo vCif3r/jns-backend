@@ -9,6 +9,9 @@ import { AdminsModule } from './admins/admins.module';
 import { DemandasModule } from './demandas/demandas.module';
 import { StatisticsModule } from './statistics/statistics.module';
 import { DenunciasModule } from './denuncias/denuncias.module';
+import { ServiciosModule } from './servicios/servicios.module';
+import { CasosModule } from './casos/casos.module';
+import { ConsultasModule } from './consultas/consultas.module';
 
 
 @Module({
@@ -30,6 +33,9 @@ import { DenunciasModule } from './denuncias/denuncias.module';
     DemandasModule,
     StatisticsModule,
     DenunciasModule,
+    ServiciosModule,
+    CasosModule,
+    ConsultasModule,
   ],
   controllers: [AppController],
   providers: [AppService],

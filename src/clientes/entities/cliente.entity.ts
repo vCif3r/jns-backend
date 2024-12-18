@@ -1,4 +1,5 @@
 import { Exclude } from "class-transformer";
+import { Caso } from "src/casos/entities/caso.entity";
 import { Demanda } from "src/demandas/entities/demanda.entity";
 import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
@@ -54,4 +55,7 @@ export class Cliente {
 
     @OneToMany(() => Demanda, demanda => demanda.cliente)
     demandas: Demanda[]
+
+    @OneToMany(() => Caso, c => c.cliente)
+    casos: Caso[]
 }

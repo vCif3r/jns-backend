@@ -49,6 +49,7 @@ export class DemandasService {
   findOne(id: number) {
     return this.demandasRepository.findOne({
       where: { id },
+      relations: ['cliente', 'abogado'],
     })
   }
 
