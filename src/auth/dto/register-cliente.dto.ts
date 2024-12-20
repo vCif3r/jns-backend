@@ -10,8 +10,6 @@ export class RegisterClienteDto extends PartialType(LoginAuthDto) {
     @IsNotEmpty()
     cedula: string
     @IsNotEmpty()
-    direccion: string
-    @IsNotEmpty()
     telefono: string
     @IsNotEmpty()
     pais: string;

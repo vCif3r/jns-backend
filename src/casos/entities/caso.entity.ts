@@ -1,6 +1,7 @@
-import { Abogado } from "src/abogados/entities/abogado.entity";
-import { Cliente } from "src/clientes/entities/cliente.entity";
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+
+import { Consulta } from "src/consultas/entities/consulta.entity";
+import { User } from "src/users/entities/user.entity";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('casos')
 export class Caso {
@@ -13,16 +14,19 @@ export class Caso {
     @Column({
         nullable: false,
         type: 'enum',
-        enum: ['En inicio','En trámite','Resuelto en primera instancia','En apelación','Con casación','Resuelto'],
+        enum: ['En inicio','En trámite','Resuelto en primera instancia','En apelación','Con casación','Resuelto','Cancelado'],
         default: 'En inicio'
     })
     estado: string;
 
-    @ManyToOne(() => Cliente, c => c.casos)
-    cliente: Cliente;
+    @ManyToOne(() => User, c => c.casosCliente)
+    cliente: User;
 
-    @ManyToOne(() => Abogado, a => a.casos)
-    abogado: Abogado;
+    @ManyToOne(() => User, a => a.casosAbogado)
+    abogado: User;
+
+    @OneToOne(() => Consulta, consulta => consulta.caso)
+    consulta: Consulta;
 
     @CreateDateColumn({ type: 'timestamp' })
     createdAt: Date; // timestamp automatically generated

@@ -11,6 +11,4 @@ export class RegisterAdminDto extends PartialType(LoginAuthDto) {
     cedula: string
     @IsNotEmpty()
     telefono: string
-    @IsNotEmpty()
-    pais: string
 }

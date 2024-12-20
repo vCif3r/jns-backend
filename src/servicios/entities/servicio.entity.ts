@@ -1,4 +1,6 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Consulta } from "src/consultas/entities/consulta.entity";
+import { TiposServicio } from "src/tipos-servicios/entities/tipos-servicio.entity";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('servicios')
 export class Servicio {
@@ -11,7 +13,8 @@ export class Servicio {
     @Column({type: 'text', nullable: false})
     descripcion: string;
 
-    @Column({ type: 'enum', enum: ['proceso_legal','consultoria']})
+    //@Column({ type: 'enum', enum: ['proceso_legal','consultoria']})
+    @Column()
     categoria: string;
 
     @Column({default: true})
@@ -21,4 +24,10 @@ export class Servicio {
     createdAt: Date; // automatically generated
     @UpdateDateColumn({ type: 'timestamp' })
     updatedAt: Date; // automatically generated
+
+    @OneToMany(() => Consulta, consulta => consulta.servicio)
+    consultas: Consulta;
+
+    @OneToMany(() => TiposServicio, ts => ts.servicio)
+    tipos_servicios: TiposServicio[];
 }

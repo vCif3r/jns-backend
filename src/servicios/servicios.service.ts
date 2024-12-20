@@ -12,8 +12,8 @@ export class ServiciosService {
     private readonly serviciosRepository: Repository<Servicio>,
   ){}
 
-  async create(createServicioDto: CreateServicioDto): Promise<Servicio> {
-    const servicio = await this.serviciosRepository.create(createServicioDto)
+  create(createServicioDto: CreateServicioDto) {
+    const servicio = this.serviciosRepository.create(createServicioDto)
     return this.serviciosRepository.save(servicio);
   }
 
@@ -43,6 +43,6 @@ export class ServiciosService {
   }
 
   remove(id: number) {
-    return `This action removes a #${id} servicio`;
+    return this.serviciosRepository.delete(id);
   }
 }

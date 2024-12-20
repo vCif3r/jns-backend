@@ -14,4 +14,9 @@ export class StatisticsController {
     countClientes(){
         return this.statisticService.countClientes();
     }
+
+    @Get('especialidad/count')
+    getAbogadosEspecialidad() {
+        return this.statisticService.countEspecialidadAbogados();
+    }
 }

@@ -1,23 +1,36 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Abogado } from 'src/abogados/entities/abogado.entity';
-import { Cliente } from 'src/clientes/entities/cliente.entity';
+import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
 export class StatisticsService {
     constructor(
-        @InjectRepository(Abogado)
-        private readonly abogadoRepository: Repository<Abogado>,
-        @InjectRepository(Cliente)
-        private readonly clienteRepository: Repository<Cliente>,
-    ) {}
+        @InjectRepository(User)
+        private readonly userRepository: Repository<User>,
+    ) { }
 
-    async countAbogados(){
-        return await this.abogadoRepository.count();
+    async countAbogados() {
+        return await this.userRepository.count(
+            { where: { role: { nombre: 'Abogado' } } }
+        );
     }
 
-    async countClientes(){
-        return await this.clienteRepository.count();
+    async countClientes() {
+        return await this.userRepository.count(
+            { where: { role: { nombre: 'Cliente' } } }
+        );
+    }
+
+
+    countEspecialidadAbogados() {
+        const results = this.userRepository
+          .createQueryBuilder('user')
+          .select('user.especialidad')
+          .addSelect('COUNT(*)', 'total')
+          .where('user.especialidad IS NOT NULL')
+          .groupBy('user.especialidad')
+          .getRawMany();
+        return results;
     }
 }
