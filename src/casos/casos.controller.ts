@@ -22,6 +22,11 @@ export class CasosController {
     return this.casosService.findOne(+id);
   }
 
+  @Get('codigo/:codigo')
+  findByCodigo(@Param('codigo') codigo: string) {
+    return this.casosService.findByCodigo(codigo);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateCasoDto: UpdateCasoDto) {
     return this.casosService.update(+id, updateCasoDto);

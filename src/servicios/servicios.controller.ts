@@ -17,6 +17,16 @@ export class ServiciosController {
     return this.serviciosService.findAll();
   }
 
+  @Get('/activos')
+  findAllActives() {
+    return this.serviciosService.findAllActives();
+  }
+
+  @Get('/tipos/:id')
+  findAllWithTypes(@Param('id') id: string) {
+    return this.serviciosService.findAllWithTypes(+id);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.serviciosService.findOne(+id);

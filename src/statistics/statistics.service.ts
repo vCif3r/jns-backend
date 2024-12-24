@@ -33,4 +33,15 @@ export class StatisticsService {
           .getRawMany();
         return results;
     }
+
+    countTipoClientes() {
+        const results = this.userRepository
+          .createQueryBuilder('user')
+          .select('user.tipo_cliente')
+          .addSelect('COUNT(*)', 'total')
+          .where('user.tipo_cliente IS NOT NULL')
+          .groupBy('user.tipo_cliente')
+          .getRawMany();
+        return results;
+    }
 }

@@ -25,8 +25,7 @@ export class Servicio {
     @UpdateDateColumn({ type: 'timestamp' })
     updatedAt: Date; // automatically generated
 
-    @OneToMany(() => Consulta, consulta => consulta.servicio)
-    consultas: Consulta;
+    
 
     @OneToMany(() => TiposServicio, ts => ts.servicio)
     tipos_servicios: TiposServicio[];

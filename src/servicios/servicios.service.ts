@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateServicioDto } from './dto/create-servicio.dto';
 import { UpdateServicioDto } from './dto/update-servicio.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -12,8 +12,15 @@ export class ServiciosService {
     private readonly serviciosRepository: Repository<Servicio>,
   ){}
 
-  create(createServicioDto: CreateServicioDto) {
-    const servicio = this.serviciosRepository.create(createServicioDto)
+  async create(createServicioDto: CreateServicioDto) {
+    const existingServicio = await this.serviciosRepository.findOne({
+      where: { nombre: createServicioDto.nombre }, 
+    });
+
+    if (existingServicio) {
+      throw new ConflictException('El servicio con este nombre ya existe');
+    }
+    const servicio = this.serviciosRepository.create(createServicioDto);
     return this.serviciosRepository.save(servicio);
   }
 
@@ -21,9 +28,26 @@ export class ServiciosService {
     return this.serviciosRepository.find();
   }
 
+  findAllActives() {
+    return this.serviciosRepository.createQueryBuilder('servicio')
+      .leftJoinAndSelect('servicio.tipos_servicios', 'tipos_servicios')
+      .where('servicio.disponible = :disponible', { disponible: true })
+      .andWhere('tipos_servicios.id IS NOT NULL')  // Verifica que haya registros en la relación
+      .getMany();
+  }
+  
+
+  findAllWithTypes(id: number){
+    return this.serviciosRepository.findOne({ 
+      where: { id: id },
+      relations: ['tipos_servicios']
+    });
+  }
+
   findOne(id: number) {
     return this.serviciosRepository.findOne({
-      where: { id },
+      where: { id: id },
+      relations: ['tipos_servicios'],
     });
   }
 

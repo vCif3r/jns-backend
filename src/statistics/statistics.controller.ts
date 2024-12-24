@@ -16,7 +16,12 @@ export class StatisticsController {
     }
 
     @Get('especialidad/count')
-    getAbogadosEspecialidad() {
+    totalEspecialidadByAbogados() {
         return this.statisticService.countEspecialidadAbogados();
+    }
+
+    @Get('tipo-cliente/count')
+    totalClientesByTipo() {
+        return this.statisticService.countTipoClientes();
     }
 }

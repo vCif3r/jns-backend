@@ -19,7 +19,9 @@ export class TiposServiciosService {
   }
 
   findAll() {
-    return `This action returns all tiposServicios`;
+    return this.tpsRepository.find({
+      relations: ['servicio']
+    });
   }
 
   findAllbyServicio(id: number) {
@@ -29,14 +31,23 @@ export class TiposServiciosService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} tiposServicio`;
+    return this.tpsRepository.findOne({where: {id: id}});
   }
 
-  update(id: number, updateTiposServicioDto: UpdateTiposServicioDto) {
-    return `This action updates a #${id} tiposServicio`;
+  async update(id: number, updateTiposServicioDto: UpdateTiposServicioDto) {
+    const tipo_servicio = await this.tpsRepository.findOne({
+      where: { id },
+    })
+
+    if (!tipo_servicio) {
+      throw new Error('Tipo Servicio no encontrado');
+    }
+    Object.assign(tipo_servicio, updateTiposServicioDto);
+
+    return await this.tpsRepository.save(tipo_servicio);
   }
 
   remove(id: number) {
-    return `This action removes a #${id} tiposServicio`;
+    return this.tpsRepository.delete(id);
   }
 }

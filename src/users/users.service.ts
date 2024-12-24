@@ -36,6 +36,14 @@ export class UsersService {
     return clientes
   }
 
+  getAbogadosDispponible(){
+    const abogados = this.userRepository.find({
+      where: {role: {nombre: 'Abogado'}, disponible: true},
+      relations: ['role'], 
+    })
+    return abogados
+  }
+
   findAllAdmin(){
     const clientes = this.userRepository.find({
       where: {role: {nombre: 'Admin'}},

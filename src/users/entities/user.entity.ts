@@ -1,5 +1,6 @@
 import { Exclude } from 'class-transformer';
 import { Caso } from 'src/casos/entities/caso.entity';
+import { Consulta } from 'src/consultas/entities/consulta.entity';
 import { Role } from 'src/roles/entities/role.entity';
 import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
@@ -56,13 +57,17 @@ export class User {
     @Column({nullable: true})
     pais: string;
 
-    @OneToMany(() => Caso, (caso) => caso.cliente)
-    casosCliente: Caso[];
+    // @OneToMany(() => Caso, (caso) => caso.cliente)
+    // casosCliente: Caso[];
 
-    @OneToMany(() => Caso, (caso) => caso.abogado)
-    casosAbogado: Caso[];
-
+    // @OneToMany(() => Caso, (caso) => caso.abogado)
+    // casosAbogado: Caso[];
+    @OneToMany(() => Consulta, (consulta) => consulta.abogado)
+    consultasAbogado: Consulta[];
 
     @ManyToOne(()=> Role, (role) => role.users)
     role: Role;
+
+    @Column({default: true})
+    disponible: boolean
 }

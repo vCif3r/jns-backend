@@ -1,6 +1,8 @@
 import { Caso } from "src/casos/entities/caso.entity";
 import { Servicio } from "src/servicios/entities/servicio.entity";
-import { Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { TiposServicio } from "src/tipos-servicios/entities/tipos-servicio.entity";
+import { User } from "src/users/entities/user.entity";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('consultas')
 export class Consulta {
@@ -8,7 +10,7 @@ export class Consulta {
     id: number;
 
     @Column()
-    demandante: string;
+    nombreCompleto: string;
 
     @Column()
     email: string;
@@ -16,8 +18,11 @@ export class Consulta {
     @Column({type: 'text'})
     detalles: string;
 
-    @ManyToOne(() => Servicio, servicio => servicio.consultas)
-    servicio: Servicio;
+    @ManyToOne(() => TiposServicio, ts => ts.consultas)
+    tipoServicio: TiposServicio;
+
+    @ManyToOne(() => User, abogado => abogado.consultasAbogado, {nullable: true, cascade: false})
+    abogado: User | null;
 
     @Column({type: 'date'})
     fecha: Date;
@@ -28,6 +33,15 @@ export class Consulta {
     @Column({type: 'text'})
     hechos: string;
 
+    @Column({type: 'enum', enum: ['pendiente','revision','cancelado','finalizado'], default: 'pendiente'})
+    estado: string;
+
     @OneToOne(() => Caso, caso => caso.consulta)
     caso: Caso;
+
+    @CreateDateColumn({type: 'datetime'})
+    createdAt: Date;
+
+    @UpdateDateColumn({type: 'datetime'})
+    updatedAt: Date;
 }

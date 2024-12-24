@@ -28,6 +28,11 @@ export class UsersController {
     return this.usersService.findAllAbogados();
   }
 
+  @Get('abogados/disponibles')
+  getAbogadosByEspecialidad() {
+    return this.usersService.getAbogadosDispponible();
+  }
+
   @Get('admins')
   findAllAdmin() {
     return this.usersService.findAllAdmin();
