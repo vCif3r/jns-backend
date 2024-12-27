@@ -1,3 +1,6 @@
-import { CreateCasoDto } from './create-caso.dto';
+import { IsString } from "class-validator";
 
-export type UpdateCasoDto = Partial<CreateCasoDto> 
+export class UpdateCasoDto {
+    @IsString()
+    estado: string;
+}

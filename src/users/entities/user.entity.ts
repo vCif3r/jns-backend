@@ -1,6 +1,7 @@
 import { Exclude } from 'class-transformer';
 import { Caso } from 'src/casos/entities/caso.entity';
 import { Consulta } from 'src/consultas/entities/consulta.entity';
+import { Notificacion } from 'src/notificaciones/entities/notificacion.entity';
 import { Role } from 'src/roles/entities/role.entity';
 import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
@@ -69,5 +70,8 @@ export class User {
     role: Role;
 
     @Column({default: true})
-    disponible: boolean
+    disponible: boolean;
+
+    @OneToMany(()=> Notificacion, (nt) => nt.user)
+    notificaciones: Notificacion
 }

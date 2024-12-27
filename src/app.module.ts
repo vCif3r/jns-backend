@@ -10,6 +10,7 @@ import { ConsultasModule } from './consultas/consultas.module';
 import { UsersModule } from './users/users.module';
 import { RolesModule } from './roles/roles.module';
 import { TiposServiciosModule } from './tipos-servicios/tipos-servicios.module';
+import { NotificacionesModule } from './notificaciones/notificaciones.module';
 
 
 @Module({
@@ -32,6 +33,7 @@ import { TiposServiciosModule } from './tipos-servicios/tipos-servicios.module';
     UsersModule,
     RolesModule,
     TiposServiciosModule,
+    NotificacionesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

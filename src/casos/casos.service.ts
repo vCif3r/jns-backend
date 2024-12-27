@@ -31,41 +31,57 @@ export class CasosService {
     if (!consulta) {
       throw new Error('Consulta no encontrada');
     }
-    consulta.estado = "finalizado";
+    consulta.estado = "aprobado ";
     await this.consultaRepository.save(consulta);
     return casoGuardado;
   }
 
   findAll() {
     return this.casoRepository.find({
-      relations: ['consulta']
+      relations: ['consulta','consulta.tipoServicio','consulta.abogado']
     });
+  }
+
+
+  findByAbogado(idAbogado: number){
+    return this.casoRepository.find({
+      relations: ['consulta','consulta.tipoServicio','consulta.abogado'],
+      where: { consulta: { abogado: { id: idAbogado}} },
+    })
   }
 
 
   findAllByAbogado(idAbogado: number) {
     return this.casoRepository.find({
       where: { consulta: { abogado: { id: idAbogado}} },
-      relations: ['consulta']
+      relations: ['consulta','consulta.tipoServicio','consulta.abogado']
     })
   }
 
   findOne(id: number) {
     return this.casoRepository.findOne({
       where: { id: id },
-      relations: ['consulta']
+      relations: ['consulta','consulta.tipoServicio','consulta.abogado']
     });
   }
 
   findByCodigo(codigo: any) {
     return this.casoRepository.findOne({
       where: { codigo: codigo },
-      relations: ['consulta']
+      relations: ['consulta','consulta.tipoServicio','consulta.abogado']
     })
   }
 
-  update(id: number, updateCasoDto: UpdateCasoDto) {
-    return `This action updates a #${id} caso`;
+  async update(id: number, updateCasoDto: UpdateCasoDto) {
+    const caso = await this.casoRepository.findOne({
+      where: { id: id },
+      relations: ['consulta','consulta.tipoServicio','consulta.abogado']
+    });
+
+    if (!caso) throw new Error('Caso no encontrado');
+    caso.estado = updateCasoDto.estado
+    
+    return this.casoRepository.save(caso)
   }
 
   remove(id: number) {

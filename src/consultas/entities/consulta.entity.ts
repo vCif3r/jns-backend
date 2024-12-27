@@ -33,7 +33,7 @@ export class Consulta {
     @Column({type: 'text'})
     hechos: string;
 
-    @Column({type: 'enum', enum: ['pendiente','revision','cancelado','finalizado'], default: 'pendiente'})
+    @Column({type: 'enum', enum: ['pendiente','revision','cancelado','aprobado'], default: 'pendiente'})
     estado: string;
 
     @OneToOne(() => Caso, caso => caso.consulta)

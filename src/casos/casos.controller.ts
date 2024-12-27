@@ -22,6 +22,11 @@ export class CasosController {
     return this.casosService.findOne(+id);
   }
 
+  @Get('abogado/:idAbogado')
+  findAllByAbogado(@Param('idAbogado') idAbogado: string) {
+    return this.casosService.findAllByAbogado(+idAbogado);
+  }
+
   @Get('codigo/:codigo')
   findByCodigo(@Param('codigo') codigo: string) {
     return this.casosService.findByCodigo(codigo);

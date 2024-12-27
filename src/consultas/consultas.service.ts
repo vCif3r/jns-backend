@@ -5,14 +5,19 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Consulta } from './entities/consulta.entity';
 import { Repository } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
+import { NotificationsGateway } from 'src/notificaciones/notificaciones.gateway';
+import { Notificacion } from 'src/notificaciones/entities/notificacion.entity';
+import { NotificacionesService } from 'src/notificaciones/notificaciones.service';
 
 @Injectable()
 export class ConsultasService {
   constructor(
     @InjectRepository(Consulta)
     private readonly consultaRepository: Repository<Consulta>,
+    private readonly notificationsService: NotificacionesService,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly notificationsGateway: NotificationsGateway, 
   ) {}
   create(createConsultaDto: CreateConsultaDto) {
     const consulta = this.consultaRepository.create(createConsultaDto);
@@ -79,7 +84,7 @@ export class ConsultasService {
   }
 
   // metodo para admin
-  async asignarAbogado(idConsulta: number, idAbogado: number) {
+  async asignarAbogado(idConsulta: number, idAbogado: any) {
     const abogado = await this.userRepository.findOne({ 
       where: { id: idAbogado }, 
       relations: ['consultasAbogado']
@@ -99,10 +104,12 @@ export class ConsultasService {
     
     consulta.abogado = abogado;
     consulta.estado = 'revision';
-    //abogado.disponible = false;
-    await this.userRepository.save(abogado);
+    // abogado.disponible = false;
+    // await this.userRepository.save(abogado);
+    await this.consultaRepository.save(consulta);
 
-    return await this.consultaRepository.save(consulta);
+
+    return consulta;
   }
 
   async cancelarConsulta(idConsulta: number) {
