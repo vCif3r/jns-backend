@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateCasoDto } from './dto/create-caso.dto';
 import { UpdateCasoDto } from './dto/update-caso.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -65,11 +65,22 @@ export class CasosService {
     });
   }
 
-  findByCodigo(codigo: any) {
-    return this.casoRepository.findOne({
-      where: { codigo: codigo },
-      relations: ['consulta','consulta.tipoServicio','consulta.abogado']
+  async findByCodigoAndEmail(codigo: string, email: string) {
+    const caso = await this.casoRepository.findOne({
+      relations: ['consulta'],
+      where: { consulta: { email: email} },
     })
+
+    if(!caso) throw new HttpException('Caso no encontrado con el correo ingresado', HttpStatus.NOT_FOUND);
+
+    let codigoEncontrado = false
+    if(caso.codigo === codigo){
+      codigoEncontrado = true;
+    }
+
+    if(!codigoEncontrado) throw new HttpException('El código de caso no coincide con el ingresado', HttpStatus.NOT_FOUND);
+
+    return caso;
   }
 
   async update(id: number, updateCasoDto: UpdateCasoDto) {

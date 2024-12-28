@@ -27,9 +27,9 @@ export class CasosController {
     return this.casosService.findAllByAbogado(+idAbogado);
   }
 
-  @Get('codigo/:codigo')
-  findByCodigo(@Param('codigo') codigo: string) {
-    return this.casosService.findByCodigo(codigo);
+  @Post('codigo-email')
+  findByCodigoAndEmail(@Body() data: any) {
+    return this.casosService.findByCodigoAndEmail(data.codigo, data.email);
   }
 
   @Patch(':id')
