@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
 import { ServiciosService } from './servicios.service';
 import { CreateServicioDto } from './dto/create-servicio.dto';
 import { UpdateServicioDto } from './dto/update-servicio.dto';
@@ -35,6 +35,14 @@ export class ServiciosController {
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateServicioDto: UpdateServicioDto) {
     return this.serviciosService.update(+id, updateServicioDto);
+  }
+
+  @Put('publicado/:id')
+  async actualizarPublicado(
+    @Param('id') id: number,
+    @Body() body: { publicado: boolean },
+  ): Promise<any> {
+    return this.serviciosService.actualizarPublicado(id, body.publicado);
   }
 
   @Delete(':id')

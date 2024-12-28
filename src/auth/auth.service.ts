@@ -94,7 +94,7 @@ export class AuthService {
       where: { email },
       relations: ['role'], 
     });
-    if (!user) throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
+    if (!user) throw new HttpException('El correo electrónico es incorrecto', HttpStatus.NOT_FOUND);
 
     const checkedPasword = await compare(password, user.password)
 

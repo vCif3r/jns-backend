@@ -25,7 +25,8 @@ export class Servicio {
     @UpdateDateColumn({ type: 'timestamp' })
     updatedAt: Date; // automatically generated
 
-    
+    @Column({type: 'boolean', default: false})
+    publicado: boolean;
 
     @OneToMany(() => TiposServicio, ts => ts.servicio)
     tipos_servicios: TiposServicio[];

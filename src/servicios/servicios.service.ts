@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateServicioDto } from './dto/create-servicio.dto';
 import { UpdateServicioDto } from './dto/update-servicio.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -25,7 +25,9 @@ export class ServiciosService {
   }
 
   findAll() {
-    return this.serviciosRepository.find();
+    return this.serviciosRepository.find({
+      relations: ['tipos_servicios'],
+    });
   }
 
   findAllActives() {
@@ -68,5 +70,24 @@ export class ServiciosService {
 
   remove(id: number) {
     return this.serviciosRepository.delete(id);
+  }
+
+  // Método para actualizar el estado de 'publicado'
+  async actualizarPublicado(id: number, publicado: boolean): Promise<any> {
+    const data = await this.serviciosRepository.findOne({
+      where: {id: id},
+      relations: ['tipos_servicios']
+    });
+    if (!data) {
+      throw new HttpException('servicio no encontrado',HttpStatus.NOT_FOUND);
+    }
+
+    if(data.tipos_servicios.length <= 0){
+      throw new HttpException('El servicio debe tener al menos un tipo de servicio', HttpStatus.CONFLICT);
+    }
+
+    data.publicado = publicado;
+    await this.serviciosRepository.save(data);
+    return data;
   }
 }
