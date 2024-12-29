@@ -5,14 +5,19 @@ import { StatisticsService } from './statistics.service';
 export class StatisticsController {
     constructor(private readonly statisticService: StatisticsService) {}
     // Implement statistics endpoints here...
-    @Get('/abogados')
-    countAbogados(){
-        return this.statisticService.countAbogados();
+    @Get('cards')
+    statisticsCards() {
+        return this.statisticService.statisticsCards();
     }
 
-    @Get('/clientes')
-    countClientes(){
-        return this.statisticService.countClientes();
+    @Get('latest/abogados')
+    getLastAbogados() {
+        return this.statisticService.getLatesAbogados();
+    }
+
+    @Get('casos-por-mes')
+    async getCasosPorMes() {
+      return this.statisticService.getCasosPorMes();
     }
 
     @Get('especialidad/count')

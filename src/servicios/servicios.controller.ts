@@ -22,6 +22,11 @@ export class ServiciosController {
     return this.serviciosService.findAllActives();
   }
 
+  @Get('/publicados')
+  findPublicados() {
+    return this.serviciosService.findServiciosPublicados();
+  }
+
   @Get('/tipos/:id')
   findAllWithTypes(@Param('id') id: string) {
     return this.serviciosService.findAllWithTypes(+id);
@@ -30,6 +35,11 @@ export class ServiciosController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.serviciosService.findOne(+id);
+  }
+
+  @Get('publicado/:id')
+  findOnePublicado(@Param('id') id: string) {
+    return this.serviciosService.findOnePublicado(+id);
   }
 
   @Patch(':id')

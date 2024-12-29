@@ -11,9 +11,7 @@ export class CreateConsultaDto {
     @IsNotEmpty()
     tipoServicio: TiposServicio;
     @IsNotEmpty()
-    fecha: Date;
-    @IsNotEmpty()
-    hora: string;
+    fechaHora: Date;
     @IsNotEmpty()
     hechos: string;
 }

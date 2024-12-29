@@ -24,11 +24,8 @@ export class Consulta {
     @ManyToOne(() => User, abogado => abogado.consultasAbogado, {nullable: true, cascade: false})
     abogado: User | null;
 
-    @Column({type: 'date'})
-    fecha: Date;
-
-    @Column({type: 'time'})
-    hora: string;
+    @Column({type: 'datetime'})
+    fechaHora: Date;
 
     @Column({type: 'text'})
     hechos: string;

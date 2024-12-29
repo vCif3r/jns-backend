@@ -21,7 +21,13 @@ export class ServiciosService {
       throw new ConflictException('El servicio con este nombre ya existe');
     }
     const servicio = this.serviciosRepository.create(createServicioDto);
-    return this.serviciosRepository.save(servicio);
+    const servicioGuardado = await this.serviciosRepository.save(servicio);
+
+    const servicioCreado = this.serviciosRepository.findOne({
+      where: { id: servicioGuardado.id},
+      relations: ['tipos_servicios'],
+    })
+    return servicioCreado;
   }
 
   findAll() {
@@ -36,6 +42,13 @@ export class ServiciosService {
       .where('servicio.disponible = :disponible', { disponible: true })
       .andWhere('tipos_servicios.id IS NOT NULL')  // Verifica que haya registros en la relación
       .getMany();
+  }
+
+  findServiciosPublicados(){
+    return this.serviciosRepository.find({
+      where: { publicado: true },
+      relations: ['tipos_servicios']
+    })
   }
   
 
@@ -53,6 +66,14 @@ export class ServiciosService {
     });
   }
 
+
+  findOnePublicado(id: number) {
+    return this.serviciosRepository.findOne({
+      where: { id: id, publicado: true },
+      relations: ['tipos_servicios'],
+    });
+  }
+
   async update(id: number, updateServicioDto: UpdateServicioDto) {
     const servicio = await this.serviciosRepository.findOne({
       where: { id },
@@ -64,8 +85,15 @@ export class ServiciosService {
     // Actualizar las propiedades del servicio con el DTO
     Object.assign(servicio, updateServicioDto);
 
+    const servicioActualizado = await this.serviciosRepository.save(servicio)
+
+    const sv = this.serviciosRepository.findOne({
+      where: {id: servicioActualizado.id},
+      relations: ['tipos_servicios']
+    })
+
     // Guardar el servicio actualizado
-    return await this.serviciosRepository.save(servicio);
+    return sv;
   }
 
   remove(id: number) {
