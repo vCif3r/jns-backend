@@ -35,10 +35,13 @@ export class NotificacionesService {
     });
   }
 
-  async getUserNotifications(userId: any): Promise<Notificacion[]> {
+
+  // todas las notificaciones
+  async getUserNotifications(userId: any) {
     return this.notificacionRepository.find({
       relations: ['user'],
       where: { user: {id: userId} },
+      order: { createdAt: 'DESC' },
     });
   }
 

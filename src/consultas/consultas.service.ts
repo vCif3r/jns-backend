@@ -61,17 +61,15 @@ export class ConsultasService {
 
     if (!consulta) throw new Error('Consulta no encontrada');
 
-
-    // if (consulta.abogado) {
-    //   const abogado = await this.userRepository.findOne({ 
-    //     where: {id: consulta.abogado.id}
-    //    });
-    //   abogado.disponible = true;
-    //   await this.userRepository.save(abogado);
-    // }
-    
+    const { id } = await this.userRepository.findOne({ 
+       where: {role: {nombre: 'Admin'}},
+       relations: ['role']
+    });
+   
+    const { nombre, apellido } = await consulta.abogado
     consulta.abogado = null;
     consulta.estado = 'pendiente';
+    this.notificationsGateway.sendNotificationToUser(id, `El abogado: ${nombre} ${apellido} rechazó la consulta.`);
     return await this.consultaRepository.save(consulta);
   }
   
@@ -108,7 +106,7 @@ export class ConsultasService {
     // await this.userRepository.save(abogado);
     await this.consultaRepository.save(consulta);
 
-
+    this.notificationsGateway.sendNotificationToUser(abogado.id, `Se te asigno una nueva consulta`);
     return consulta;
   }
 
