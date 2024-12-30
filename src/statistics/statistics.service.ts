@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Caso } from 'src/casos/entities/caso.entity';
 import { Consulta } from 'src/consultas/entities/consulta.entity';
+import { TiposServicio } from 'src/tipos-servicios/entities/tipos-servicio.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Between, Repository } from 'typeorm';
 
@@ -13,13 +14,15 @@ export class StatisticsService {
         @InjectRepository(Caso)
         private readonly casoRepository: Repository<Caso>,
         @InjectRepository(Consulta)
-        private readonly ConsultaRepository: Repository<Consulta>,
+        private readonly consultaRepository: Repository<Consulta>,
+        @InjectRepository(TiposServicio)
+        private readonly tipoServicioRepository: Repository<TiposServicio>,
     ) { }
 
     async statisticsCards() {
         const countAbogados = await this.userRepository.count({ where: { role: { nombre: 'Abogado' } }, relations: ['role'] });
         const countCasos = await this.casoRepository.count();
-        const countConsultas = await this.ConsultaRepository.count();
+        const countConsultas = await this.consultaRepository.count();
         const stats = [
             { label: 'Total Abogados', value: countAbogados, icon: 'groups' },
             { label: 'Total Consultas', value: countConsultas, icon: 'pending_actions' },
@@ -58,10 +61,11 @@ export class StatisticsService {
         return data;
     }
 
-    async getCasosPorMes() {
+    async getCasosYConsultasPorMes() {
         const queryBuilder = this.casoRepository.createQueryBuilder('caso');
+        const consultaQueryBuilder = this.consultaRepository.createQueryBuilder('consulta');
     
-        // Agrupar los casos por mes y contar los casos en cada mes
+        // Obtener casos por mes
         const casosPorMes = await queryBuilder
           .select([
             'EXTRACT(YEAR FROM caso.createdAt) AS year',
@@ -70,32 +74,84 @@ export class StatisticsService {
           ])
           .groupBy('year')
           .addGroupBy('month')
-          .orderBy('year', 'DESC') // Ordenar por año de forma descendente
-          .addOrderBy('month', 'DESC') // Ordenar por mes de forma descendente
+          .orderBy('year', 'DESC')
+          .addOrderBy('month', 'DESC')
           .getRawMany();
     
-        return casosPorMes;
-      }
+        // Obtener consultas por mes
+        const consultasPorMes = await consultaQueryBuilder
+          .select([
+            'EXTRACT(YEAR FROM consulta.createdAt) AS year',
+            'EXTRACT(MONTH FROM consulta.createdAt) AS month',
+            'COUNT(consulta.id) AS totalConsultas',
+          ])
+          .groupBy('year')
+          .addGroupBy('month')
+          .orderBy('year', 'DESC')
+          .addOrderBy('month', 'DESC')
+          .getRawMany();
+    
+        // Combine the data from cases and consultations
+        const result = casosPorMes.map((caso) => {
+          const consulta = consultasPorMes.find(
+            (consulta) => consulta.year === caso.year && consulta.month === caso.month
+          );
+          return {
+            year: caso.year,
+            month: caso.month,
+            totalCasos: caso.totalCasos,
+            totalConsultas: consulta ? consulta.totalConsultas : 0, // Si no hay consulta, asignamos 0
+          };
+        });
+    
+        return result;
+    }
+    
 
     countEspecialidadAbogados() {
         const results = this.userRepository
             .createQueryBuilder('user')
             .select('user.especialidad')
             .addSelect('COUNT(*)', 'total')
-            .where('user.especialidad IS NOT NULL')
+            .where('user.especialidad IS NOT NULL && roleId = 2')
             .groupBy('user.especialidad')
             .getRawMany();
         return results;
     }
 
-    countTipoClientes() {
-        const results = this.userRepository
-            .createQueryBuilder('user')
-            .select('user.tipo_cliente')
-            .addSelect('COUNT(*)', 'total')
-            .where('user.tipo_cliente IS NOT NULL')
-            .groupBy('user.tipo_cliente')
-            .getRawMany();
+    countConsultasByTpService(){
+        const results = this.tipoServicioRepository
+        .createQueryBuilder('tipoServicio')
+        .leftJoinAndSelect('tipoServicio.consultas', 'consulta')  // Realizamos un LEFT JOIN con la tabla de consultas
+        .groupBy('tipoServicio.id')  // Agrupamos por el ID del tipo de servicio
+        .select('tipoServicio.nombre', 'nombre')  // Seleccionamos el nombre del tipo de servicio
+        .addSelect('COUNT(consulta.id)', 'cantidadConsultas')  // Contamos las consultas
+        .getRawMany();  // Obtenemos el resultado como un array de objetos
         return results;
     }
+
+    countConsultasByServicio() {
+        const results = this.tipoServicioRepository
+            .createQueryBuilder('tipoServicio')
+            .leftJoinAndSelect('tipoServicio.consultas', 'consulta')  // Realizamos un LEFT JOIN con la tabla de consultas
+            .leftJoin('tipoServicio.servicio', 'servicio')  // Realizamos un LEFT JOIN con la tabla de Servicio
+            .groupBy('servicio.id')  // Agrupamos por el ID del servicio
+            .select('servicio.nombre', 'servicio')  // Seleccionamos el nombre del servicio
+            .addSelect('COUNT(consulta.id)', 'cantidadConsultas')  // Contamos las consultas asociadas a cada servicio
+            .getRawMany();  // Obtenemos el resultado como un array de objetos
+        
+        return results;
+    }
+    
+
+    // countTipoClientes() {
+    //     const results = this.userRepository
+    //         .createQueryBuilder('user')
+    //         .select('user.tipo_cliente')
+    //         .addSelect('COUNT(*)', 'total')
+    //         .where('user.tipo_cliente IS NOT NULL')
+    //         .groupBy('user.tipo_cliente')
+    //         .getRawMany();
+    //     return results;
+    // }
 }

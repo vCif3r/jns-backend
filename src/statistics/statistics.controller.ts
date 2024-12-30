@@ -15,9 +15,9 @@ export class StatisticsController {
         return this.statisticService.getLatesAbogados();
     }
 
-    @Get('casos-por-mes')
+    @Get('casos-consultas-por-mes')
     async getCasosPorMes() {
-      return this.statisticService.getCasosPorMes();
+      return this.statisticService.getCasosYConsultasPorMes();
     }
 
     @Get('especialidad/count')
@@ -25,8 +25,18 @@ export class StatisticsController {
         return this.statisticService.countEspecialidadAbogados();
     }
 
-    @Get('tipo-cliente/count')
-    totalClientesByTipo() {
-        return this.statisticService.countTipoClientes();
+    // @Get('tipo-cliente/count')
+    // totalClientesByTipo() {
+    //     return this.statisticService.countTipoClientes();
+    // }
+
+    @Get('tiposervicios/count/consultas')
+    totalTipoServiciosConsultas() {
+        return this.statisticService.countConsultasByTpService();
+    }
+
+    @Get('servicios/count/consultas')
+    totalServiciosConsultas() {
+        return this.statisticService.countConsultasByServicio();
     }
 }

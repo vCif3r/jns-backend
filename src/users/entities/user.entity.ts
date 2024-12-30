@@ -35,7 +35,7 @@ export class User {
     @Column({ type: 'enum', enum: ['Individual', 'Empresa'], nullable: true })
     tipo_cliente?: string;
 
-    @Column({ type: 'enum', enum: ['Civil', 'Penal', 'Laboral'], nullable: true })
+    @Column({nullable: false})
     especialidad?: string;
 
     @Column({ type: 'date', nullable: true  })
