@@ -38,7 +38,8 @@ export class CasosService {
 
   findAll() {
     return this.casoRepository.find({
-      relations: ['consulta','consulta.tipoServicio','consulta.abogado']
+      relations: ['consulta','consulta.tipoServicio','consulta.abogado'],
+      order: { createdAt: 'DESC' },
     });
   }
 
@@ -47,6 +48,7 @@ export class CasosService {
     return this.casoRepository.find({
       relations: ['consulta','consulta.tipoServicio','consulta.abogado'],
       where: { consulta: { abogado: { id: idAbogado}} },
+      order: { createdAt: 'DESC' },
     })
   }
 
@@ -54,7 +56,8 @@ export class CasosService {
   findAllByAbogado(idAbogado: number) {
     return this.casoRepository.find({
       where: { consulta: { abogado: { id: idAbogado}} },
-      relations: ['consulta','consulta.tipoServicio','consulta.abogado']
+      relations: ['consulta','consulta.tipoServicio','consulta.abogado'],
+      order: { createdAt: 'DESC' },
     })
   }
 

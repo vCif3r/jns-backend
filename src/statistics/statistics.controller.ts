@@ -30,10 +30,10 @@ export class StatisticsController {
     //     return this.statisticService.countTipoClientes();
     // }
 
-    @Get('tiposervicios/count/consultas')
-    totalTipoServiciosConsultas() {
-        return this.statisticService.countConsultasByTpService();
-    }
+    // @Get('tiposervicios/count/consultas')
+    // totalTipoServiciosConsultas() {
+    //     return this.statisticService.countConsultasByTpService();
+    // }
 
     @Get('servicios/count/consultas')
     totalServiciosConsultas() {

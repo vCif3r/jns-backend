@@ -2,7 +2,7 @@ import { WebSocketGateway, WebSocketServer, OnGatewayInit, OnGatewayConnection, 
 import { Server, Socket } from 'socket.io';
 import { NotificacionesService } from './notificaciones.service';
 
-@WebSocketGateway(3001, { cors: { origin: '*' } })
+@WebSocketGateway(0, { cors: { origin: '*' } })
 export class NotificationsGateway {
 
   constructor(
