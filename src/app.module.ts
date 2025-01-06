@@ -11,6 +11,7 @@ import { UsersModule } from './users/users.module';
 import { RolesModule } from './roles/roles.module';
 import { TiposServiciosModule } from './tipos-servicios/tipos-servicios.module';
 import { NotificacionesModule } from './notificaciones/notificaciones.module';
+import { ContactosModule } from './contactos/contactos.module';
 
 
 @Module({
@@ -34,6 +35,7 @@ import { NotificacionesModule } from './notificaciones/notificaciones.module';
     RolesModule,
     TiposServiciosModule,
     NotificacionesModule,
+    ContactosModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,17 +1,21 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, UseGuards } from '@nestjs/common';
 import { ServiciosService } from './servicios.service';
 import { CreateServicioDto } from './dto/create-servicio.dto';
 import { UpdateServicioDto } from './dto/update-servicio.dto';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
+
 
 @Controller('servicios')
 export class ServiciosController {
   constructor(private readonly serviciosService: ServiciosService) {}
 
+  @UseGuards(AuthGuard)
   @Post()
   create(@Body() createServicioDto: CreateServicioDto) {
     return this.serviciosService.create(createServicioDto);
   }
 
+  @UseGuards(AuthGuard)
   @Get()
   findAll() {
     return this.serviciosService.findAll();
@@ -42,11 +46,13 @@ export class ServiciosController {
     return this.serviciosService.findOnePublicado(+id);
   }
 
+  @UseGuards(AuthGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateServicioDto: UpdateServicioDto) {
     return this.serviciosService.update(+id, updateServicioDto);
   }
 
+  @UseGuards(AuthGuard)
   @Put('publicado/:id')
   async actualizarPublicado(
     @Param('id') id: number,
@@ -54,7 +60,7 @@ export class ServiciosController {
   ): Promise<any> {
     return this.serviciosService.actualizarPublicado(id, body.publicado);
   }
-
+  @UseGuards(AuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.serviciosService.remove(+id);

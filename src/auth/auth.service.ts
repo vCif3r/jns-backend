@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, UseGuards } from '@nestjs/common';
 import { hash, compare } from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -9,6 +9,7 @@ import { RegisterAbogadoDto } from './dto/register-abogado.dto';
 import { RegisterAdminDto } from './dto/register-admin.dto';
 import { User } from 'src/users/entities/user.entity';
 import { Role } from 'src/roles/entities/role.entity';
+import { AuthGuard } from './guards/auth.guard';
 
 @Injectable()
 export class AuthService {
@@ -56,6 +57,7 @@ export class AuthService {
     return this.userRepository.save(user);
   }
 
+
   async registerAdmin(userObject: RegisterAdminDto) {
     const { password } = userObject;
     const passwordHash = await hash(password, 10);
@@ -94,11 +96,11 @@ export class AuthService {
       where: { email },
       relations: ['role'], 
     });
-    if (!user) throw new HttpException('El correo electrónico es incorrecto', HttpStatus.NOT_FOUND);
+    if (!user) throw new BadRequestException('El correo electrónico es incorrecto');
 
     const checkedPasword = await compare(password, user.password)
 
-    if (!checkedPasword) throw new HttpException('Credenciales inválidas', HttpStatus.FORBIDDEN);
+    if (!checkedPasword) throw new BadRequestException('Credenciales inválidas');
 
     const payload = {
       id: user.id,
@@ -109,8 +111,8 @@ export class AuthService {
       rol: user.role.nombre,
     };
 
-    const token = this.jwtService.sign(payload);
-    return { token };
+    const access_token = await this.jwtService.signAsync(payload);
+    return { access_token };
   }
 
   // async login(userObjectLogin: LoginAuthDto): Promise<any> {

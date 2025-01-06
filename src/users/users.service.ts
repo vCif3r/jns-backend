@@ -53,7 +53,7 @@ export class UsersService {
   }
 
   findOne(id: number) {
-    return this.userRepository.findOne({ where: { id } });
+    return this.userRepository.findOne({ where: { id }, relations: ['role'],  });
   }
 
   async update(id: number, updateUserDto: User) {
@@ -69,7 +69,11 @@ export class UsersService {
         cliente[key] = updateUserDto[key]; // Asigna el valor solo si está presente
       }
     });
-    return this.userRepository.save(cliente);
+    const updateUser = await this.userRepository.save(cliente);
+    return this.userRepository.findOne({
+      where: {id: updateUser.id},
+      relations: ['role']
+    })
     //return this.userRepository.update(id, updateUserDto)
   }
 

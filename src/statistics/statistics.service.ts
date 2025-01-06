@@ -4,7 +4,7 @@ import { Caso } from 'src/casos/entities/caso.entity';
 import { Consulta } from 'src/consultas/entities/consulta.entity';
 import { TiposServicio } from 'src/tipos-servicios/entities/tipos-servicio.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Between, Repository } from 'typeorm';
+import { Between, Not, Repository } from 'typeorm';
 
 @Injectable()
 export class StatisticsService {
@@ -183,4 +183,46 @@ export class StatisticsService {
   //         .getRawMany();
   //     return results;
   // }
+
+  async getCaracteristicasHome(){
+    const totalAbogados = await this.userRepository.count({
+      where: { role: { nombre: 'Abogado' } },
+      relations: ['role'],
+    })
+
+    const totalCasosResueltos = await this.casoRepository.count({
+      where: { estado: 'Resuelto'}
+    })
+
+    const totalCasosEnCursos = await this.casoRepository.count({
+      where: { estado: Not('Resuelto')}
+    })
+
+    const totalConsultas = await this.consultaRepository.count();
+
+    const result = [
+      {
+        icon: 'person',
+        label: 'Nuestros Abogados',
+        value: totalAbogados,
+      },
+      {
+        icon: 'assignment',
+        label: 'Total consultas',
+        value: totalConsultas,
+      },
+      {
+        icon: 'check',
+        label: 'Casos resueltos',
+        value: totalCasosResueltos,
+      },
+      {
+        icon: 'business_center',
+        label: 'Casos en curso',
+        value: totalCasosEnCursos,
+      }
+    ]
+    return result
+
+  }
 }
