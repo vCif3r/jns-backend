@@ -18,7 +18,8 @@ import { AuthGuard } from 'src/auth/guards/auth.guard';
   controllers: [ConsultasController],
   providers: [
     ConsultasService,
-    NotificationsGateway
+    NotificationsGateway,
+    AuthGuard
   ],
 })
 export class ConsultasModule {}
