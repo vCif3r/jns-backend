@@ -12,7 +12,9 @@ import { RolesModule } from './roles/roles.module';
 import { TiposServiciosModule } from './tipos-servicios/tipos-servicios.module';
 import { NotificacionesModule } from './notificaciones/notificaciones.module';
 import { ContactosModule } from './contactos/contactos.module';
-
+import { PostsModule } from './posts/posts.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -36,6 +38,11 @@ import { ContactosModule } from './contactos/contactos.module';
     TiposServiciosModule,
     NotificacionesModule,
     ContactosModule,
+    PostsModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'), // El directorio donde se guardan las imágenes
+      serveRoot: '/uploads',
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
