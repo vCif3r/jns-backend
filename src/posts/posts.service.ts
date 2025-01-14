@@ -81,8 +81,36 @@ export class PostsService {
     });
   }
 
-  update(id: number, updatePostDto: UpdatePostDto) {
-    return this.postRepository.update(id, updatePostDto);
+  async update(id: number, data: any): Promise<Post> {
+    // Buscar el post a actualizar
+    const post = await this.findOne(id);
+
+    if (!post) {
+      throw new Error('Post no encontrado');
+    }
+
+    // Validación para el campo "publicado"
+    let publicado: boolean;
+    if (data.publicado === 'true' || data.publicado === '1') {
+      publicado = true;
+    } else if (data.publicado === 'false' || data.publicado === '0') {
+      publicado = false;
+    } else {
+      throw new Error('Valor no válido para la propiedad "publicado".');
+    }
+
+    // Si no se proporciona una nueva imagen, se mantiene la imagen existente
+    const imagen = data.imagen || post.imagen;  // Si no se pasa nueva imagen, mantenemos la actual
+
+    // Actualizar los campos del post
+    post.titulo = data.titulo || post.titulo;
+    post.contenido = data.contenido || post.contenido;
+    post.categoria = data.categoria || post.categoria;
+    post.publicado = publicado;
+    post.imagen = imagen;  // Usamos la nueva imagen o la original
+
+    // Guardamos el post actualizado en la base de datos
+    return this.postRepository.save(post);
   }
 
   remove(id: number) {

@@ -55,11 +55,48 @@ export class PostsController {
     return this.postsService.findOne(+id);
   }
 
-  @UseGuards(AuthGuard)
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-    return this.postsService.update(+id, updatePostDto);
+  @Put(':id')  // Usamos PUT para actualizar un post existente
+  @UseInterceptors(FileInterceptor('image', { 
+    storage: diskStorage({
+      destination: './uploads',  // Directorio donde se guardan las imágenes
+      filename: (req, file, callback) => {
+        const filename = `${Date.now()}-${file.originalname}`;
+        callback(null, filename);
+      },
+    }),
+  }))
+  async update(
+    @Param('id') id: any,  // ID del post a actualizar
+    @Body() updatePostDto: UpdatePostDto,  // Datos para actualizar
+    @UploadedFile() image: Express.Multer.File,  // Imagen (si es proporcionada)
+  ) {
+    let imageUrl: string | null = null;
+
+    // Si se proporciona una imagen nueva, se guarda la nueva URL de la imagen
+    if (image) {
+      imageUrl = `/uploads/${image.filename}`;
+    } else {
+      // Si no se proporciona una imagen, no cambiamos la imagen existente
+      const post = await this.postsService.findOne(+id);  // Obtenemos el post original para conservar su imagen
+      imageUrl = post.imagen;  // Usamos la imagen original del post
+    }
+
+    // Actualizamos el post en la base de datos
+    return this.postsService.update(id, {
+      titulo: updatePostDto.titulo,
+      contenido: updatePostDto.contenido,
+      categoria: updatePostDto.categoria,
+      imagen: imageUrl,  // Imagen nueva o la original
+      publicado: updatePostDto.publicado
+    });
   }
+
+
+  // @UseGuards(AuthGuard)
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
+  //   return this.postsService.update(+id, updatePostDto);
+  // }
 
   @UseGuards(AuthGuard)
   @Delete(':id')
