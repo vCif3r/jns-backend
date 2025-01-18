@@ -2,7 +2,6 @@ import { Controller, Get, UseGuards } from '@nestjs/common';
 import { StatisticsService } from './statistics.service';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 
-
 @Controller('statistics')
 export class StatisticsController {
     constructor(private readonly statisticService: StatisticsService) {}

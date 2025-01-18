@@ -154,4 +154,38 @@ export class AuthService {
   //   //   token
   //   // };
   // }
+
+
+  async createAdminUser() {
+    const adminRole = await this.roleRepository.findOne({ where: { nombre: 'Admin' } });
+
+    if (!adminRole) {
+      console.log('No se encontró el rol admin, creándolo...');
+      const newAdminRole = this.roleRepository.create({ nombre: 'Admin' });
+      await this.roleRepository.save(newAdminRole);
+    }
+
+    const existingAdmin = await this.userRepository.findOne({
+      where: { role: {nombre: 'Admin'} },
+      relations: ['role']
+    });
+
+    if (!existingAdmin) {
+      const password = 'jns123456';
+      const hashedPassword = await hash(password, 10); 
+      const adminUser = this.userRepository.create({
+        nombre: 'admin',
+        apellido: 'admin',
+        cedula: '123456789',
+        email: 'admin.admin@gmail.com',
+        password: hashedPassword,
+        role: adminRole,
+      });
+
+      await this.userRepository.save(adminUser);
+      console.log('Usuario admin creado exitosamente');
+    } else {
+      console.log('El usuario admin ya existe');
+    }
+  }
 }

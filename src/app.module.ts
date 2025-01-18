@@ -15,6 +15,9 @@ import { ContactosModule } from './contactos/contactos.module';
 import { PostsModule } from './posts/posts.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { AuthService } from './auth/auth.service';
+import { User } from './users/entities/user.entity';
+import { Role } from './roles/entities/role.entity';
 
 @Module({
   imports: [
@@ -43,8 +46,9 @@ import { join } from 'path';
       rootPath: join(__dirname, '..', 'uploads'), // El directorio donde se guardan las imágenes
       serveRoot: '/uploads',
     }),
+    TypeOrmModule.forFeature([User, Role])
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AuthService],
 })
 export class AppModule {}

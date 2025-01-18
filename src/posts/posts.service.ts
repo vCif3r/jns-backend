@@ -26,6 +26,7 @@ export class PostsService {
     const newPost = this.postRepository.create({
       titulo: data.titulo,
       contenido: data.contenido,
+      resumen: data.resumen,
       publicado: publicado,
       categoria: data.categoria,
       imagen: data.imagen,
@@ -107,6 +108,7 @@ export class PostsService {
     post.contenido = data.contenido || post.contenido;
     post.categoria = data.categoria || post.categoria;
     post.publicado = publicado;
+    post.resumen = data.resumen || post.resumen,
     post.imagen = imagen;  // Usamos la nueva imagen o la original
 
     // Guardamos el post actualizado en la base de datos

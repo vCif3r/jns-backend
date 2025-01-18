@@ -1,4 +1,3 @@
-import { text } from "stream/consumers";
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('posts')
@@ -14,6 +13,9 @@ export class Post {
   
     @Column({type: 'text'})
     contenido: string;
+
+    @Column({type: 'text'})
+    resumen: string;
 
     @Column({nullable: true})
     imagen: string;

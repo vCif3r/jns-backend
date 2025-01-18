@@ -31,6 +31,7 @@ export class PostsController {
       titulo: createPostDto.titulo,
       contenido: createPostDto.contenido,
       categoria: createPostDto.categoria,
+      resumen: createPostDto.resumen,
       imagen: imageUrl,
       publicado: createPostDto.publicado
     });
@@ -86,6 +87,7 @@ export class PostsController {
       titulo: updatePostDto.titulo,
       contenido: updatePostDto.contenido,
       categoria: updatePostDto.categoria,
+      resumen: updatePostDto.resumen,
       imagen: imageUrl,  // Imagen nueva o la original
       publicado: updatePostDto.publicado
     });
