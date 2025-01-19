@@ -4,6 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { UpdateClienteDto } from './dto/update-user.dto';
+import { JwtService } from '@nestjs/jwt';
+import { hash, compare } from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -12,12 +14,20 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ){}
 
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  async create(createUserDto: CreateUserDto) {
+    const { password } = createUserDto;
+    const passwordHash = await hash(password, 10);
+    const newUser = this.userRepository.create({
+      ...createUserDto,  // Copia todos los datos del DTO
+      password: passwordHash,
+    });
+    return this.userRepository.save(newUser);
   }
 
   findAll() {
-    return this.userRepository.find();
+    return this.userRepository.find({
+      relations: ['role'],
+    });
   }
 
   findAllClientes(){

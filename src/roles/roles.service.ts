@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -9,11 +9,19 @@ import { Repository } from 'typeorm';
 export class RolesService {
   constructor(
     @InjectRepository(Role)
-    private readonly roleRepository: Repository<Role>, 
-  ){}
+    private readonly roleRepository: Repository<Role>,
+  ) {}
 
-  create(createRoleDto: CreateRoleDto) {
+  async create(createRoleDto: CreateRoleDto) {
     const role = this.roleRepository.create(createRoleDto);
+
+    const existingServicio = await this.roleRepository.findOne({
+      where: { nombre: createRoleDto.nombre },
+    });
+
+    if (existingServicio) {
+      throw new ConflictException('El servicio con este nombre ya existe');
+    }
     return this.roleRepository.save(role);
   }
 
@@ -22,11 +30,11 @@ export class RolesService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} role`;
+    return this.roleRepository.findOneBy({ id });
   }
 
   update(id: number, updateRoleDto: UpdateRoleDto) {
-    return `This action updates a #${id} role`;
+    return this.roleRepository.update(id, updateRoleDto);
   }
 
   remove(id: number) {

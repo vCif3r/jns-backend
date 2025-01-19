@@ -18,8 +18,8 @@ export class Consulta {
     @Column({type: 'text'})
     detalles: string;
 
-    @ManyToOne(() => TiposServicio, ts => ts.consultas)
-    tipoServicio: TiposServicio;
+    @ManyToOne(() => Servicio, servicio => servicio.consultas)
+    servicio: Servicio;
 
     @ManyToOne(() => User, abogado => abogado.consultasAbogado, {nullable: true, cascade: false})
     abogado: User | null;

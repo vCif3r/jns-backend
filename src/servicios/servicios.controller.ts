@@ -31,6 +31,11 @@ export class ServiciosController {
     return this.serviciosService.findServiciosPublicados();
   }
 
+  @Get('/publicados/area/:id')
+  findPublicadosByArea(@Param('id') id: string) {
+    return this.serviciosService.findServiciosPublicadosByArea(id);
+  }
+
   @Get('/tipos/:id')
   findAllWithTypes(@Param('id') id: string) {
     return this.serviciosService.findAllWithTypes(+id);

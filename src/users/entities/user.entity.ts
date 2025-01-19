@@ -22,7 +22,7 @@ export class User {
     @Column({nullable: true})
     direccion: string;
 
-    @Column()
+    @Column({nullable: true})
     telefono: string;
 
     @Column({ unique: true })
@@ -32,10 +32,10 @@ export class User {
     @Column()
     password: string;
 
-    @Column({ type: 'enum', enum: ['Individual', 'Empresa'], nullable: true })
-    tipo_cliente?: string;
+    // @Column({ type: 'enum', enum: ['Individual', 'Empresa'], nullable: true })
+    // tipo_cliente?: string;
 
-    @Column({nullable: false})
+    @Column({nullable: true})
     especialidad?: string;
 
     @Column({ type: 'date', nullable: true  })

@@ -24,11 +24,11 @@ export class TiposServiciosService {
     });
   }
 
-  findAllbyServicio(id: number) {
-    return this.tpsRepository.find({
-       where: {servicio: {id: id}}
-    });
-  }
+  // findAllbyServicio(id: number) {
+  //   return this.tpsRepository.find({
+  //      where: {servicio: {id: id}}
+  //   });
+  // }
 
   findOne(id: number) {
     return this.tpsRepository.findOne({where: {id: id}});

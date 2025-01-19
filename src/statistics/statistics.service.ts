@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Caso } from 'src/casos/entities/caso.entity';
 import { Consulta } from 'src/consultas/entities/consulta.entity';
+import { Servicio } from 'src/servicios/entities/servicio.entity';
 import { TiposServicio } from 'src/tipos-servicios/entities/tipos-servicio.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Between, Not, Repository } from 'typeorm';
@@ -15,8 +16,8 @@ export class StatisticsService {
     private readonly casoRepository: Repository<Caso>,
     @InjectRepository(Consulta)
     private readonly consultaRepository: Repository<Consulta>,
-    @InjectRepository(TiposServicio)
-    private readonly tipoServicioRepository: Repository<TiposServicio>,
+    @InjectRepository(Servicio)
+    private readonly servicioRepository: Repository<Servicio>,
   ) {}
 
   async statisticsCards() {
@@ -158,19 +159,16 @@ export class StatisticsService {
   async countConsultasByServicio() {
     const currentYear = new Date().getFullYear(); // Año actual
 
-    const results = await this.tipoServicioRepository
-      .createQueryBuilder('tipoServicio')
-      .leftJoinAndSelect('tipoServicio.consultas', 'consulta') // Realizamos un LEFT JOIN con la tabla de consultas
-      .leftJoin('tipoServicio.servicio', 'servicio') // Realizamos un LEFT JOIN con la tabla de Servicio
-      .where('EXTRACT(YEAR FROM consulta.createdAt) = :currentYear', {
-        currentYear,
-      }) // Filtramos por el año actual
-      .groupBy('servicio.id') // Agrupamos por el ID del servicio
-      .select('servicio.nombre', 'servicio') // Seleccionamos el nombre del servicio
-      .addSelect('COUNT(consulta.id)', 'cantidadConsultas') // Contamos las consultas asociadas a cada servicio
-      .getRawMany(); // Obtenemos el resultado como un array de objetos
+  const results = await this.servicioRepository
+    .createQueryBuilder('servicio')
+    .leftJoinAndSelect('servicio.consultas', 'consulta') // LEFT JOIN con la relación 'consultas'
+    .where('EXTRACT(YEAR FROM consulta.createdAt) = :currentYear', { currentYear })
+    .groupBy('servicio.id') // Agrupamos por el ID del servicio
+    .select('servicio.nombre', 'servicio') // Seleccionamos el nombre del servicio
+    .addSelect('COUNT(consulta.id)', 'cantidadConsultas') // Contamos las consultas asociadas
+    .getRawMany(); // Obtenemos el resultado como un array de objetos
 
-    return results;
+  return results;
   }
 
   // countTipoClientes() {

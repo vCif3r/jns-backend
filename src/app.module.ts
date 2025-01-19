@@ -18,6 +18,7 @@ import { join } from 'path';
 import { AuthService } from './auth/auth.service';
 import { User } from './users/entities/user.entity';
 import { Role } from './roles/entities/role.entity';
+import { AreasModule } from './areas/areas.module';
 
 @Module({
   imports: [
@@ -46,7 +47,8 @@ import { Role } from './roles/entities/role.entity';
       rootPath: join(__dirname, '..', 'uploads'), // El directorio donde se guardan las imágenes
       serveRoot: '/uploads',
     }),
-    TypeOrmModule.forFeature([User, Role])
+    TypeOrmModule.forFeature([User, Role]),
+    AreasModule
   ],
   controllers: [AppController],
   providers: [AppService, AuthService],

@@ -25,14 +25,14 @@ export class ServiciosService {
 
     const servicioCreado = this.serviciosRepository.findOne({
       where: { id: servicioGuardado.id},
-      relations: ['tipos_servicios'],
+      relations: ['area'],
     })
     return servicioCreado;
   }
 
   findAll() {
     return this.serviciosRepository.find({
-      relations: ['tipos_servicios'],
+      relations: ['area'],
     });
   }
 
@@ -40,14 +40,20 @@ export class ServiciosService {
     return this.serviciosRepository.createQueryBuilder('servicio')
       .leftJoinAndSelect('servicio.tipos_servicios', 'tipos_servicios')
       .where('servicio.disponible = :disponible', { disponible: true })
-      .andWhere('tipos_servicios.id IS NOT NULL')  // Verifica que haya registros en la relación
       .getMany();
   }
 
   findServiciosPublicados(){
     return this.serviciosRepository.find({
       where: { publicado: true },
-      relations: ['tipos_servicios']
+      relations: ['area']
+    })
+  }
+
+  findServiciosPublicadosByArea(id: any){
+    return this.serviciosRepository.find({
+      where: { publicado: true, area: {id: id} },
+      relations: ['area']
     })
   }
   
@@ -55,14 +61,14 @@ export class ServiciosService {
   findAllWithTypes(id: number){
     return this.serviciosRepository.findOne({ 
       where: { id: id },
-      relations: ['tipos_servicios']
+      relations: ['area']
     });
   }
 
   findOne(id: number) {
     return this.serviciosRepository.findOne({
       where: { id: id },
-      relations: ['tipos_servicios'],
+      relations: ['area'],
     });
   }
 
@@ -70,7 +76,7 @@ export class ServiciosService {
   findOnePublicado(id: number) {
     return this.serviciosRepository.findOne({
       where: { id: id, publicado: true },
-      relations: ['tipos_servicios'],
+      relations: ['area'],
     });
   }
 
@@ -89,7 +95,7 @@ export class ServiciosService {
 
     const sv = this.serviciosRepository.findOne({
       where: {id: servicioActualizado.id},
-      relations: ['tipos_servicios']
+      relations: ['area']
     })
 
     // Guardar el servicio actualizado
@@ -104,15 +110,15 @@ export class ServiciosService {
   async actualizarPublicado(id: number, publicado: boolean): Promise<any> {
     const data = await this.serviciosRepository.findOne({
       where: {id: id},
-      relations: ['tipos_servicios']
+      relations: ['area']
     });
     if (!data) {
       throw new HttpException('servicio no encontrado',HttpStatus.NOT_FOUND);
     }
 
-    if(data.tipos_servicios.length <= 0){
-      throw new HttpException('El servicio debe tener al menos un tipo de servicio', HttpStatus.CONFLICT);
-    }
+    // if(data.tipos_servicios.length <= 0){
+    //   throw new HttpException('El servicio debe tener al menos un tipo de servicio', HttpStatus.CONFLICT);
+    // }
 
     data.publicado = publicado;
     await this.serviciosRepository.save(data);

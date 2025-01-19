@@ -38,7 +38,7 @@ export class CasosService {
 
   findAll() {
     return this.casoRepository.find({
-      relations: ['consulta','consulta.tipoServicio','consulta.abogado'],
+      relations: ['consulta','consulta.servicio','consulta.abogado'],
       order: { createdAt: 'DESC' },
     });
   }
@@ -46,7 +46,7 @@ export class CasosService {
 
   findByAbogado(idAbogado: number){
     return this.casoRepository.find({
-      relations: ['consulta','consulta.tipoServicio','consulta.abogado'],
+      relations: ['consulta','consulta.servicio','consulta.abogado'],
       where: { consulta: { abogado: { id: idAbogado}} },
       order: { createdAt: 'DESC' },
     })
@@ -56,7 +56,7 @@ export class CasosService {
   findAllByAbogado(idAbogado: number) {
     return this.casoRepository.find({
       where: { consulta: { abogado: { id: idAbogado}} },
-      relations: ['consulta','consulta.tipoServicio','consulta.abogado'],
+      relations: ['consulta','consulta.servicio','consulta.abogado'],
       order: { createdAt: 'DESC' },
     })
   }
@@ -64,7 +64,7 @@ export class CasosService {
   findOne(id: number) {
     return this.casoRepository.findOne({
       where: { id: id },
-      relations: ['consulta','consulta.tipoServicio','consulta.abogado']
+      relations: ['consulta','consulta.servicio','consulta.abogado']
     });
   }
 
@@ -89,7 +89,7 @@ export class CasosService {
   async update(id: number, updateCasoDto: UpdateCasoDto) {
     const caso = await this.casoRepository.findOne({
       where: { id: id },
-      relations: ['consulta','consulta.tipoServicio','consulta.abogado']
+      relations: ['consulta','consulta.servicio','consulta.abogado']
     });
 
     if (!caso) throw new Error('Caso no encontrado');

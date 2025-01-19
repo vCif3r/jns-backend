@@ -26,14 +26,14 @@ export class ConsultasService {
 
   findAll() {
     return this.consultaRepository.find({
-      relations: ['tipoServicio','abogado'],
+      relations: ['servicio','abogado'],
     });
   }
 
   findOne(id: number) {
     return this.consultaRepository.findOne({
       where: { id: id },
-      relations: ['tipoServicio'],
+      relations: ['servicio'],
     });
   }
 
@@ -48,7 +48,7 @@ export class ConsultasService {
   findAllPendings() {
     return this.consultaRepository.find({
       where: {estado: 'pendiente'},
-      relations: ['tipoServicio'],
+      relations: ['servicio'],
     })
   }
 
@@ -77,7 +77,7 @@ export class ConsultasService {
   consultasParaAbogados(id: number) {
     return this.consultaRepository.find({
       where: { abogado: {id: id}, estado: 'revision' },
-      relations: ['tipoServicio', 'abogado'],
+      relations: ['servicio', 'abogado'],
     });
   }
 

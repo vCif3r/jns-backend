@@ -10,10 +10,9 @@ export class TiposServicio {
     nombre: string;
     @Column({type: 'text', nullable: true})
     descripcion: string;
-    @ManyToOne(() => Servicio, servicio => servicio.tipos_servicios, { cascade: true })
-    servicio: Servicio
+    // @ManyToOne(() => Servicio, servicio => servicio.tipos_servicios, { cascade: true })
+    // servicio: Servicio
     @Column({default: true})
     estado: boolean;
-    @OneToMany(() => Consulta, consulta => consulta.tipoServicio)
-    consultas: Consulta;
+    
 }
