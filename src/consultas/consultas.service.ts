@@ -61,15 +61,21 @@ export class ConsultasService {
 
     if (!consulta) throw new Error('Consulta no encontrada');
 
-    const { id } = await this.userRepository.findOne({ 
+    const admins = await this.userRepository.find({ 
        where: {role: {nombre: 'Admin'}},
        relations: ['role']
     });
+
+    
    
     const { nombre, apellido } = await consulta.abogado
     consulta.abogado = null;
     consulta.estado = 'pendiente';
-    this.notificationsGateway.sendNotificationToUser(id, `El abogado: ${nombre} ${apellido} rechazó la consulta.`);
+
+    admins.forEach((a)=>{
+      this.notificationsGateway.sendNotificationToUser(a.id, `El abogado: ${nombre} ${apellido} rechazó la consulta.`);
+    })
+
     return await this.consultaRepository.save(consulta);
   }
   
