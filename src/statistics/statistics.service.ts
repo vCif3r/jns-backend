@@ -133,7 +133,7 @@ export class StatisticsService {
       .createQueryBuilder('user')
       .select('user.especialidad')
       .addSelect('COUNT(*)', 'total')
-      .where('user.especialidad IS NOT NULL && roleId = 2')
+      .where('user.especialidad IS NOT NULL && roleId = 3')
       .groupBy('user.especialidad')
       .getRawMany();
     return results;

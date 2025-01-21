@@ -66,6 +66,10 @@ export class ConsultasService {
        relations: ['role']
     });
 
+    const superAdmin = await this.userRepository.findOne({ 
+      where: {role: {nombre: 'SuperAdmin'}},
+      relations: ['role']
+   });
     
    
     const { nombre, apellido } = await consulta.abogado
@@ -75,6 +79,8 @@ export class ConsultasService {
     admins.forEach((a)=>{
       this.notificationsGateway.sendNotificationToUser(a.id, `El abogado: ${nombre} ${apellido} rechazó la consulta.`);
     })
+
+    this.notificationsGateway.sendNotificationToUser(superAdmin.id, `El abogado: ${nombre} ${apellido} rechazó la consulta.`);
 
     return await this.consultaRepository.save(consulta);
   }

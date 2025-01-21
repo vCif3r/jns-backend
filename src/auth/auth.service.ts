@@ -155,37 +155,62 @@ export class AuthService {
   //   // };
   // }
 
-
-  async createAdminUser() {
+  async createRoles(){
     const adminRole = await this.roleRepository.findOne({ where: { nombre: 'Admin' } });
+    const abogadoRole = await this.roleRepository.findOne({ where: { nombre: 'Abogado' } });
+    const editorRole = await this.roleRepository.findOne({ where: { nombre: 'Editor' } });
 
-    if (!adminRole) {
+    if(!adminRole){
+      console.log('creando rol admin...')
+      const newadminRole = this.roleRepository.create({ nombre: 'Admin' });
+      await this.roleRepository.save(newadminRole);
+    }
+
+    if(!abogadoRole){
+      console.log('creando rol abogado...')
+      const newabogadoRole = this.roleRepository.create({ nombre: 'Abogado' });
+      await this.roleRepository.save(newabogadoRole);
+    }
+
+    if(!editorRole){
+      console.log('creando rol editor...')
+      const neweditorRole = this.roleRepository.create({ nombre: 'Editor' });
+      await this.roleRepository.save(neweditorRole);
+    }
+  }
+
+  async createSuperAdminUser() {
+    const superadminRole = await this.roleRepository.findOne({ where: { nombre: 'SuperAdmin' } });
+
+    if (!superadminRole) {
       console.log('No se encontró el rol admin, creándolo...');
-      const newAdminRole = this.roleRepository.create({ nombre: 'Admin' });
-      await this.roleRepository.save(newAdminRole);
+      const newSpAdminRole = this.roleRepository.create({ nombre: 'SuperAdmin' });
+      await this.roleRepository.save(newSpAdminRole);
     }
 
     const existingAdmin = await this.userRepository.findOne({
-      where: { role: {nombre: 'Admin'} },
+      where: { role: {nombre: 'SuperAdmin'} },
       relations: ['role']
     });
 
     if (!existingAdmin) {
+      const superadminRole = await this.roleRepository.findOne({ where: { nombre: 'SuperAdmin' } });
+
       const password = 'jns123456';
       const hashedPassword = await hash(password, 10); 
       const adminUser = this.userRepository.create({
         nombre: 'admin',
         apellido: 'admin',
-        cedula: '123456789',
-        email: 'admin.admin@gmail.com',
+        cedula: '12345678',
+        email: 'admin.jns@gmail.com',
         password: hashedPassword,
-        role: adminRole,
+        role: superadminRole,
       });
 
       await this.userRepository.save(adminUser);
-      console.log('Usuario admin creado exitosamente');
+      console.log('super admin creado exitosamente');
     } else {
-      console.log('El usuario admin ya existe');
+      console.log('El usuario superadmin ya existe');
     }
   }
 }
