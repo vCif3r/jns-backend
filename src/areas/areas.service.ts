@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateAreaDto } from './dto/create-area.dto';
 import { UpdateAreaDto } from './dto/update-area.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -32,4 +32,18 @@ export class AreasService {
   remove(id: number) {
     return this.areaRepository.delete(id);
   }
+
+
+  async actualizarPublicado(id: number, publicado: boolean): Promise<any> {
+      const data = await this.areaRepository.findOne({
+        where: {id: id}
+      });
+      if (!data) {
+        throw new HttpException('servicio no encontrado',HttpStatus.NOT_FOUND);
+      }
+  
+      data.publicado = publicado;
+      await this.areaRepository.save(data);
+      return data;
+    }
 }

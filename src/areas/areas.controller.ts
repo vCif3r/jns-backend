@@ -35,4 +35,14 @@ export class AreasController {
   remove(@Param('id') id: string) {
     return this.areasService.remove(+id);
   }
+
+
+  @UseGuards(AuthGuard)
+  @Put('publicado/:id')
+  async actualizarPublicado(
+    @Param('id') id: number,
+    @Body() body: { publicado: boolean },
+  ): Promise<any> {
+    return this.areasService.actualizarPublicado(id, body.publicado);
+  }
 }

@@ -13,7 +13,8 @@ export class Area {
     createdAt: Date 
     @UpdateDateColumn()
     updateAt: Date
-
+    @Column({type: 'boolean', default: false})
+    publicado: boolean;
     @OneToMany(()=> Servicio, servicio => servicio.area)
     servicios: Servicio[]
 }
