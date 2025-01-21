@@ -13,10 +13,20 @@ export class AreasController {
   create(@Body() createAreaDto: CreateAreaDto) {
     return this.areasService.create(createAreaDto);
   }
-
+  @UseGuards(AuthGuard)
   @Get()
   findAll() {
     return this.areasService.findAll();
+  }
+
+  @Get('publicados')
+  findAllPublicados() {
+    return this.areasService.findAllPublicados();
+  }
+
+  @Get('publicado/:id')
+  findOnePublicado(@Param('id') id: string) {
+    return this.areasService.findOne(+id);
   }
 
   @Get(':id')

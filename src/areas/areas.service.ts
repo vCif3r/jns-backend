@@ -21,6 +21,18 @@ export class AreasService {
     return this.areaRepository.find();
   }
 
+  findAllPublicados(){
+    return this.areaRepository.find({
+      where: { publicado: true },
+    })
+  }
+
+  findOnePublicado(id: any){
+    return this.areaRepository.findOne({
+      where: { id: id, publicado: true },
+    })
+  }
+
   findOne(id: number) {
     return this.areaRepository.findOneBy({ id });
   }

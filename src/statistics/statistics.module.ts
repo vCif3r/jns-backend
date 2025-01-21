@@ -8,9 +8,10 @@ import { Consulta } from 'src/consultas/entities/consulta.entity';
 import { TiposServicio } from 'src/tipos-servicios/entities/tipos-servicio.entity';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { Servicio } from 'src/servicios/entities/servicio.entity';
+import { Role } from 'src/roles/entities/role.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Caso, Consulta, Servicio])],
+  imports: [TypeOrmModule.forFeature([User, Caso, Consulta, Servicio, Role])],
   providers: [StatisticsService, AuthGuard],
   controllers: [StatisticsController]
 })

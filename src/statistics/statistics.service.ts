@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Caso } from 'src/casos/entities/caso.entity';
 import { Consulta } from 'src/consultas/entities/consulta.entity';
+import { Role } from 'src/roles/entities/role.entity';
 import { Servicio } from 'src/servicios/entities/servicio.entity';
 import { TiposServicio } from 'src/tipos-servicios/entities/tipos-servicio.entity';
 import { User } from 'src/users/entities/user.entity';
@@ -18,6 +19,8 @@ export class StatisticsService {
     private readonly consultaRepository: Repository<Consulta>,
     @InjectRepository(Servicio)
     private readonly servicioRepository: Repository<Servicio>,
+    @InjectRepository(Role)
+    private readonly roleRepository: Repository<Role>,
   ) {}
 
   async statisticsCards() {
@@ -128,12 +131,15 @@ export class StatisticsService {
     return result;
   }
 
-  countEspecialidadAbogados() {
+  async countEspecialidadAbogados() {
+    const { id } = await this.roleRepository.findOne({
+      where: {nombre: 'Abogado'},
+    })
     const results = this.userRepository
       .createQueryBuilder('user')
       .select('user.especialidad')
       .addSelect('COUNT(*)', 'total')
-      .where('user.especialidad IS NOT NULL && roleId = 3')
+      .where(`user.especialidad IS NOT NULL && roleId = ${id}`)
       .groupBy('user.especialidad')
       .getRawMany();
     return results;
