@@ -24,6 +24,7 @@ export class AreasService {
   findAllPublicados(){
     return this.areaRepository.find({
       where: { publicado: true },
+      relations: ['servicios']
     })
   }
 
@@ -48,12 +49,17 @@ export class AreasService {
 
   async actualizarPublicado(id: number, publicado: boolean): Promise<any> {
       const data = await this.areaRepository.findOne({
-        where: {id: id}
+        where: {id: id},
+        relations: ['servicios']
       });
       if (!data) {
         throw new HttpException('servicio no encontrado',HttpStatus.NOT_FOUND);
       }
   
+      if(data.servicios.length <= 0){
+        throw new HttpException('El área debe tener al menos un servicio', HttpStatus.CONFLICT);
+      }
+
       data.publicado = publicado;
       await this.areaRepository.save(data);
       return data;
