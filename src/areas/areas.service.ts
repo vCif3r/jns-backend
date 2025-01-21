@@ -18,7 +18,9 @@ export class AreasService {
   }
 
   findAll() {
-    return this.areaRepository.find();
+    return this.areaRepository.find({
+      relations: ['servicios']
+    });
   }
 
   findAllPublicados(){
