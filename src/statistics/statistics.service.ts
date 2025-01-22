@@ -4,7 +4,6 @@ import { Caso } from 'src/casos/entities/caso.entity';
 import { Consulta } from 'src/consultas/entities/consulta.entity';
 import { Role } from 'src/roles/entities/role.entity';
 import { Servicio } from 'src/servicios/entities/servicio.entity';
-import { TiposServicio } from 'src/tipos-servicios/entities/tipos-servicio.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Between, Not, Repository } from 'typeorm';
 
@@ -132,18 +131,35 @@ export class StatisticsService {
   }
 
   async countEspecialidadAbogados() {
-    const { id } = await this.roleRepository.findOne({
-      where: {nombre: 'Abogado'},
-    })
-    const results = this.userRepository
-      .createQueryBuilder('user')
-      .select('user.especialidad')
-      .addSelect('COUNT(*)', 'total')
-      .where(`user.especialidad IS NOT NULL && roleId = ${id}`)
-      .groupBy('user.especialidad')
-      .getRawMany();
-    return results;
+    try {
+      // Obtener el ID del rol 'Abogado'
+      const role = await this.roleRepository.findOne({
+        where: { nombre: 'Abogado' },
+      });
+  
+      // Si no encontramos el rol, retornamos un resultado vacío o un mensaje adecuado
+      if (!role) {
+        return { message: 'Rol Abogado no encontrado' };
+      }
+  
+      const { id } = role;
+  
+      // Realizar la consulta de los abogados con especialidad
+      const results = await this.userRepository
+        .createQueryBuilder('user')
+        .select('user.especialidad')
+        .addSelect('COUNT(*)', 'total')
+        .where('user.especialidad IS NOT NULL')
+        .andWhere('user.roleId = :roleId', { roleId: id })  // Usamos parámetros preparados para evitar inyección SQL
+        .groupBy('user.especialidad')
+        .getRawMany();
+  
+      return results;
+    } catch (error) {
+      throw new Error('Hubo un error al contar las especialidades de los abogados');
+    }
   }
+  
 
 //   async countConsultasByTpService() {  
 //     const currentYear = new Date().getFullYear(); 

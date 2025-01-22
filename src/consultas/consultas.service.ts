@@ -3,11 +3,12 @@ import { CreateConsultaDto } from './dto/create-consulta.dto';
 import { UpdateConsultaDto } from './dto/update-consulta.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Consulta } from './entities/consulta.entity';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { NotificationsGateway } from 'src/notificaciones/notificaciones.gateway';
 import { Notificacion } from 'src/notificaciones/entities/notificacion.entity';
 import { NotificacionesService } from 'src/notificaciones/notificaciones.service';
+import { GetConsultasDto } from './dto/get-consultas.dto';
 
 @Injectable()
 export class ConsultasService {
@@ -24,10 +25,10 @@ export class ConsultasService {
     return this.consultaRepository.save(consulta);
   }
 
-  findAll() {
-    return this.consultaRepository.find({
-      relations: ['servicio','abogado'],
-    });
+  async findAll() {
+    return  this.consultaRepository.find({
+      relations: ['servicio', 'abogado']
+    })
   }
 
   findOne(id: number) {
@@ -45,12 +46,38 @@ export class ConsultasService {
     return this.consultaRepository.delete(id);
   }
 
-  findAllPendings() {
-    return this.consultaRepository.find({
-      where: {estado: 'pendiente'},
-      relations: ['servicio'],
-    })
+  async findAllPendings(page: number, pageSize: number, filtroServicio: string = '', filtroCedula: string = '') {
+    const skip = (page - 1) * pageSize;
+
+    const queryBuilder = this.consultaRepository.createQueryBuilder('consulta')
+      .leftJoinAndSelect('consulta.servicio', 'servicio') // Cargar la relación 'servicio'
+      .where('consulta.estado = :estado', { estado: 'pendiente' }); // Filtrar por estado
+
+    // Si existe un filtro de servicio, agregarlo a la consulta
+    if (filtroServicio) {
+      queryBuilder.andWhere('servicio.nombre LIKE :filtroServicio', { filtroServicio: `%${filtroServicio}%` });
+    }
+
+    // Si existe un filtro de cédula, agregarlo a la consulta
+    if (filtroCedula) {
+      queryBuilder.andWhere('consulta.cedula LIKE :filtroCedula', { filtroCedula: `%${filtroCedula}%` });
+    }
+
+    // Paginación
+    queryBuilder.skip(skip).take(pageSize)
+
+    // Ejecutar la consulta con paginación y contar los resultados
+    const [data, total] = await queryBuilder.getManyAndCount();
+
+    return {
+      data,
+      total,
+      page,
+      pageSize,
+    };
   }
+
+  
 
   // metodos para abogados
   async rechazarConsulta(idConsulta: any) {
@@ -86,12 +113,39 @@ export class ConsultasService {
   }
   
 
-  consultasParaAbogados(id: number) {
-    return this.consultaRepository.find({
-      where: { abogado: {id: id}, estado: 'revision' },
-      relations: ['servicio', 'abogado'],
-    });
-  }
+  async consultasParaAbogados(id: number, page: number, pageSize: number, filtroServicio: string = '', filtroCedula: string = '') {
+    const skip = (page - 1) * pageSize;
+
+    const queryBuilder = this.consultaRepository.createQueryBuilder('consulta')
+      .leftJoinAndSelect('consulta.servicio', 'servicio') // Relación con servicio
+      .leftJoinAndSelect('consulta.abogado', 'abogado') // Relación con abogado
+      .where('consulta.estado = :estado', { estado: 'revision' }) // Filtrar por estado 'revision'
+      .andWhere('abogado.id = :id', { id }); // Filtrar por ID del abogado
+
+    // Si existe un filtro de servicio, agregarlo a la consulta
+    if (filtroServicio) {
+      queryBuilder.andWhere('servicio.nombre LIKE :filtroServicio', { filtroServicio: `%${filtroServicio}%` });
+    }
+
+    // Si existe un filtro de cédula, agregarlo a la consulta
+    if (filtroCedula) {
+      queryBuilder.andWhere('consulta.cedula LIKE :filtroCedula', { filtroCedula: `%${filtroCedula}%` });
+    }
+
+    // Paginación
+    queryBuilder.skip(skip).take(pageSize);
+
+    // Ejecutar la consulta con paginación y contar los resultados
+    const [data, total] = await queryBuilder.getManyAndCount();
+
+    return {
+      data,
+      total,
+      page,
+      pageSize,
+    };
+}
+
 
   // metodo para admin
   async asignarAbogado(idConsulta: number, idAbogado: any) {

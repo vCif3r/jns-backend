@@ -15,10 +15,10 @@ export class Role {
     @Column({type: 'boolean', default: true})
     estado: boolean;
 
-    @CreateDateColumn({type: 'timestamp'})
+    @CreateDateColumn({type: 'timestamptz'})
     createdAt: Date;
 
-    @UpdateDateColumn({type: 'timestamp'})
+    @UpdateDateColumn({type: 'timestamptz'})
     updatedAt: Date;
 
     @OneToMany(() => User, user => user.role)

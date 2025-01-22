@@ -9,7 +9,6 @@ import { CasosModule } from './casos/casos.module';
 import { ConsultasModule } from './consultas/consultas.module';
 import { UsersModule } from './users/users.module';
 import { RolesModule } from './roles/roles.module';
-import { TiposServiciosModule } from './tipos-servicios/tipos-servicios.module';
 import { NotificacionesModule } from './notificaciones/notificaciones.module';
 import { ContactosModule } from './contactos/contactos.module';
 import { PostsModule } from './posts/posts.module';
@@ -19,16 +18,20 @@ import { AuthService } from './auth/auth.service';
 import { User } from './users/entities/user.entity';
 import { Role } from './roles/entities/role.entity';
 import { AreasModule } from './areas/areas.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true, // Hace que las variables de entorno estén disponibles globalmente
+    }),
     TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: 'root',
-      database: 'abogados_jns',
+      type: 'postgres',
+      host: process.env.DB_HOST,
+      port: +process.env.DB_PORT,
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_DATABASE,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
@@ -39,7 +42,6 @@ import { AreasModule } from './areas/areas.module';
     ConsultasModule,
     UsersModule,
     RolesModule,
-    TiposServiciosModule,
     NotificacionesModule,
     ContactosModule,
     PostsModule,

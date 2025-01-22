@@ -1,6 +1,5 @@
 import { Area } from "src/areas/entities/area.entity";
 import { Consulta } from "src/consultas/entities/consulta.entity";
-import { TiposServicio } from "src/tipos-servicios/entities/tipos-servicio.entity";
 import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('servicios')
@@ -14,9 +13,9 @@ export class Servicio {
     @Column({type: 'text', nullable: false})
     descripcion: string;
 
-    @CreateDateColumn({ type: 'timestamp' })
+    @CreateDateColumn({ type: 'timestamptz' })
     createdAt: Date; // automatically generated
-    @UpdateDateColumn({ type: 'timestamp' })
+    @UpdateDateColumn({ type: 'timestamptz' })
     updatedAt: Date; // automatically generated
 
     @Column({type: 'boolean', default: false})

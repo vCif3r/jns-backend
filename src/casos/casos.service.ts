@@ -31,7 +31,7 @@ export class CasosService {
     if (!consulta) {
       throw new Error('Consulta no encontrada');
     }
-    consulta.estado = "aprobado ";
+    consulta.estado = "aprobado";
     await this.consultaRepository.save(consulta);
     return casoGuardado;
   }

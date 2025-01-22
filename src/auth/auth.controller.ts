@@ -8,20 +8,20 @@ import { RegisterAbogadoDto } from './dto/register-abogado.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('register/cliente')
-  registerCliente(@Body() userObject: RegisterClienteDto) {
-    return this.authService.registerCliente(userObject);
-  }
+  // @Post('register/cliente')
+  // registerCliente(@Body() userObject: RegisterClienteDto) {
+  //   return this.authService.registerCliente(userObject);
+  // }
 
-  @Post('register/abogado')
-  registerAbogado(@Body() userObject: RegisterAbogadoDto) {
-    return this.authService.registerAbogado(userObject);
-  }
+  // @Post('register/abogado')
+  // registerAbogado(@Body() userObject: RegisterAbogadoDto) {
+  //   return this.authService.registerAbogado(userObject);
+  // }
 
-  @Post('register/admin')
-  registerAdmin(@Body() userObject: RegisterAbogadoDto) {
-    return this.authService.registerAdmin(userObject);
-  }
+  // @Post('register/admin')
+  // registerAdmin(@Body() userObject: RegisterAbogadoDto) {
+  //   return this.authService.registerAdmin(userObject);
+  // }
 
   @Post('login')
   login(@Body() userObject: LoginAuthDto) {

@@ -22,10 +22,10 @@ export class Caso {
     @JoinColumn()
     consulta: Consulta;
 
-    @CreateDateColumn({ type: 'timestamp' })
+    @CreateDateColumn({ type: 'timestamptz' })
     createdAt: Date; // timestamp automatically generated
 
-    @UpdateDateColumn({ type: 'timestamp' })
+    @UpdateDateColumn({ type: 'timestamptz' })
     updatedAt: Date; // timestamp automatically updated
 
 
@@ -34,6 +34,6 @@ export class Caso {
         this.codigo = this.generarCodigo();
     }
     private generarCodigo(): string {
-        return 'C-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+        return 'C-' + Math.random().toString(36).substr(2, 5).toUpperCase() + new Date().getFullYear();
     }
 }

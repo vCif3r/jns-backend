@@ -196,13 +196,13 @@ export class AuthService {
     if (!existingAdmin) {
       const superadminRole = await this.roleRepository.findOne({ where: { nombre: 'SuperAdmin' } });
 
-      const password = 'jns123456';
+      const password = process.env.SUPER_ADMIN_PASSWORD;
       const hashedPassword = await hash(password, 10); 
       const adminUser = this.userRepository.create({
-        nombre: 'admin',
-        apellido: 'admin',
-        cedula: '12345678',
-        email: 'admin.jns@gmail.com',
+        nombre: process.env.SUPER_ADMIN_NAME,
+        apellido: process.env.SUPER_ADMIN_LASTNAME,
+        cedula: process.env.SUPER_ADMIN_CEDULA,
+        email: process.env.SUPER_ADMIN_EMAIL,
         password: hashedPassword,
         role: superadminRole,
       });

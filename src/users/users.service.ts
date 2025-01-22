@@ -2,10 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
-import { UpdateClienteDto } from './dto/update-user.dto';
-import { JwtService } from '@nestjs/jwt';
-import { hash, compare } from 'bcrypt';
+import { Not, Repository } from 'typeorm';
+import { hash } from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -18,7 +16,7 @@ export class UsersService {
     const { password } = createUserDto;
     const passwordHash = await hash(password, 10);
     const newUser = this.userRepository.create({
-      ...createUserDto,  // Copia todos los datos del DTO
+      ...createUserDto,  // Copia todos los atributos del DTO
       password: passwordHash,
     });
     return this.userRepository.save(newUser);
@@ -27,6 +25,11 @@ export class UsersService {
   findAll() {
     return this.userRepository.find({
       relations: ['role'],
+      where: {
+        role: {
+          nombre: Not('SuperAdmin')  // Excluir usuarios con el rol 'SuperAdmin'
+        }
+      },
     });
   }
 

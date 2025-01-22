@@ -1,6 +1,5 @@
 import { Caso } from "src/casos/entities/caso.entity";
 import { Servicio } from "src/servicios/entities/servicio.entity";
-import { TiposServicio } from "src/tipos-servicios/entities/tipos-servicio.entity";
 import { User } from "src/users/entities/user.entity";
 import { Column, CreateDateColumn, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
@@ -11,6 +10,9 @@ export class Consulta {
 
     @Column()
     nombreCompleto: string;
+
+    @Column()
+    cedula: string;
 
     @Column()
     email: string;
@@ -24,7 +26,7 @@ export class Consulta {
     @ManyToOne(() => User, abogado => abogado.consultasAbogado, {nullable: true, cascade: false})
     abogado: User | null;
 
-    @Column({type: 'datetime'})
+    @Column({type: 'timestamp'})
     fechaHora: Date;
 
     @Column({type: 'text'})
@@ -36,9 +38,9 @@ export class Consulta {
     @OneToOne(() => Caso, caso => caso.consulta)
     caso: Caso;
 
-    @CreateDateColumn({type: 'datetime'})
+    @CreateDateColumn({type: 'timestamptz'})
     createdAt: Date;
 
-    @UpdateDateColumn({type: 'datetime'})
+    @UpdateDateColumn({type: 'timestamptz'})
     updatedAt: Date;
 }

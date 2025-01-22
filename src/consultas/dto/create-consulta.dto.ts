@@ -1,6 +1,5 @@
 import { IsNotEmpty } from "class-validator";
-import { TiposServicio } from "src/tipos-servicios/entities/tipos-servicio.entity";
-
+import { Servicio } from "src/servicios/entities/servicio.entity";
 export class CreateConsultaDto {
     @IsNotEmpty()
     demandante: string;
@@ -9,7 +8,7 @@ export class CreateConsultaDto {
     @IsNotEmpty()
     detalles: string;
     @IsNotEmpty()
-    tipoServicio: TiposServicio;
+    servicio: Servicio;
     @IsNotEmpty()
     fechaHora: Date;
     @IsNotEmpty()
