@@ -13,9 +13,9 @@ export class Servicio {
     @Column({type: 'text', nullable: false})
     descripcion: string;
 
-    @CreateDateColumn({ type: 'timestamptz' })
+    @CreateDateColumn()
     createdAt: Date; // automatically generated
-    @UpdateDateColumn({ type: 'timestamptz' })
+    @UpdateDateColumn()
     updatedAt: Date; // automatically generated
 
     @Column({type: 'boolean', default: false})

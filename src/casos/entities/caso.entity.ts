@@ -22,11 +22,11 @@ export class Caso {
     @JoinColumn()
     consulta: Consulta;
 
-    @CreateDateColumn({ type: 'timestamptz' })
-    createdAt: Date; // timestamp automatically generated
+    @CreateDateColumn()
+    createdAt: Date;
 
-    @UpdateDateColumn({ type: 'timestamptz' })
-    updatedAt: Date; // timestamp automatically updated
+    @UpdateDateColumn()
+    updatedAt: Date;
 
 
     @BeforeInsert()

@@ -26,7 +26,7 @@ import { ConfigModule } from '@nestjs/config';
       isGlobal: true, // Hace que las variables de entorno estén disponibles globalmente
     }),
     TypeOrmModule.forRoot({
-      type: 'postgres',
+      type: 'mysql',
       host: process.env.DB_HOST,
       port: +process.env.DB_PORT,
       username: process.env.DB_USERNAME,

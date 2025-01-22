@@ -50,9 +50,9 @@ export class User {
     @Column({nullable: true})
     estado_civil: string;
 
-    @CreateDateColumn({ type: 'timestamptz' })
+    @CreateDateColumn()
     createdAt: Date;
-    @UpdateDateColumn({ type: 'timestamptz' })
+    @UpdateDateColumn()
     updatedAt: Date;
 
     @Column({nullable: true})

@@ -12,6 +12,6 @@ export class Contacto {
     tema: string;
     @Column()
     mensaje: string;
-    @CreateDateColumn({type: 'timestamptz'})
+    @CreateDateColumn()
     createdAt: Date;
 }

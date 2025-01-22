@@ -26,7 +26,7 @@ export class Consulta {
     @ManyToOne(() => User, abogado => abogado.consultasAbogado, {nullable: true, cascade: false})
     abogado: User | null;
 
-    @Column({type: 'timestamp'})
+    @Column({type: 'datetime'})
     fechaHora: Date;
 
     @Column({type: 'text'})
@@ -38,9 +38,9 @@ export class Consulta {
     @OneToOne(() => Caso, caso => caso.consulta)
     caso: Caso;
 
-    @CreateDateColumn({type: 'timestamptz'})
+    @CreateDateColumn()
     createdAt: Date;
 
-    @UpdateDateColumn({type: 'timestamptz'})
+    @UpdateDateColumn()
     updatedAt: Date;
 }

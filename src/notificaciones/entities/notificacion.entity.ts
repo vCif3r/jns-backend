@@ -16,6 +16,6 @@ export class Notificacion {
     @JoinColumn({ name: 'userId' })
     user: User; // Relación con el usuario
   
-    @Column({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+    @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
     createdAt: Date;
 }
