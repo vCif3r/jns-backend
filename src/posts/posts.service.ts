@@ -82,6 +82,12 @@ export class PostsService {
     });
   }
 
+  findPostPublicado(id: number) {
+    return this.postRepository.findOne({
+      where: {id: id, publicado: true},
+    });
+  }
+
   async update(id: number, data: any): Promise<Post> {
     // Buscar el post a actualizar
     const post = await this.findOne(id);

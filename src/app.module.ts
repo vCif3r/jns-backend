@@ -19,6 +19,7 @@ import { User } from './users/entities/user.entity';
 import { Role } from './roles/entities/role.entity';
 import { AreasModule } from './areas/areas.module';
 import { ConfigModule } from '@nestjs/config';
+import { SuscripcionesModule } from './suscripciones/suscripciones.module';
 
 @Module({
   imports: [
@@ -50,7 +51,8 @@ import { ConfigModule } from '@nestjs/config';
       serveRoot: '/uploads',
     }),
     TypeOrmModule.forFeature([User, Role]),
-    AreasModule
+    AreasModule,
+    SuscripcionesModule
   ],
   controllers: [AppController],
   providers: [AppService, AuthService],

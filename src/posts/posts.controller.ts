@@ -50,6 +50,11 @@ export class PostsController {
     return this.postsService.findAllPublished(paginationDto);
   }
 
+  @Get('publicados/:id')
+  findPostPublicado(@Param('id') id: string) {
+    return this.postsService.findPostPublicado(+id);
+  }
+
   @UseGuards(AuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
