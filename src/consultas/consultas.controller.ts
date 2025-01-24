@@ -16,6 +16,7 @@ import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { GetConsultasDto } from './dto/get-consultas.dto';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { PaginationConsultaDTO } from './dto/pagination.dto';
 
 @Controller('consultas')
 export class ConsultasController {
@@ -24,6 +25,13 @@ export class ConsultasController {
   @Post()
   create(@Body() createConsultaDto: CreateConsultaDto) {
     return this.consultasService.create(createConsultaDto);
+  }
+
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('Admin', 'SuperAdmin')
+  @Get('reportes')
+  findConsultaReportes(@Query() getConsultasDto: PaginationConsultaDTO) {
+    return this.consultasService.findConsultaReportes(getConsultasDto);
   }
 
   @UseGuards(AuthGuard, RolesGuard)
@@ -111,4 +119,6 @@ export class ConsultasController {
   remove(@Param('id') id: string) {
     return this.consultasService.remove(+id);
   }
+
+ 
 }

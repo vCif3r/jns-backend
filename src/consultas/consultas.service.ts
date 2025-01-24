@@ -3,12 +3,13 @@ import { CreateConsultaDto } from './dto/create-consulta.dto';
 import { UpdateConsultaDto } from './dto/update-consulta.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Consulta } from './entities/consulta.entity';
-import { Like, Repository } from 'typeorm';
+import { Between, LessThanOrEqual, Like, MoreThanOrEqual, Repository } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { NotificationsGateway } from 'src/notificaciones/notificaciones.gateway';
 import { Notificacion } from 'src/notificaciones/entities/notificacion.entity';
 import { NotificacionesService } from 'src/notificaciones/notificaciones.service';
 import { GetConsultasDto } from './dto/get-consultas.dto';
+import { PaginationConsultaDTO } from './dto/pagination.dto';
 
 @Injectable()
 export class ConsultasService {
@@ -184,4 +185,59 @@ export class ConsultasService {
     consulta.estado = 'cancelado';
     return await this.consultaRepository.save(consulta);
   }
+
+
+  // reporte 
+  async findConsultaReportes(pagination: PaginationConsultaDTO) {
+    const { page, pageSize, cedula, servicio, fechaDesde, fechaHasta } = pagination;
+    const skip = (page - 1) * pageSize;
+  
+    let where: any = {};
+  
+    // Solo inicializar 'consulta' si es necesario
+    if (cedula || fechaDesde || fechaHasta || servicio) {
+      where = {};
+  
+      // Filtro por cédula (usando LIKE)
+      if (cedula) {
+        where.cedula = Like(`%${cedula}%`);
+      }
+  
+      // Asegurarse de que 'where.servicio' esté inicializado
+      if (servicio) {
+        if (!where.servicio) {
+          where.servicio = {};  // Inicializa 'where.servicio' si no está definido
+        }
+        where.servicio.nombre = Like(`%${servicio}%`);
+      }
+  
+      // Filtro por rango de fechas
+      if (fechaDesde && fechaHasta) {
+        where.createdAt = Between(fechaDesde, fechaHasta); // Ajusta 'createdAt' si la fecha está en otro campo
+      } else if (fechaDesde) {
+        where.createdAt = MoreThanOrEqual(fechaDesde); // Solo filtra por 'desde'
+      } else if (fechaHasta) {
+        where.createdAt = LessThanOrEqual(fechaHasta); // Solo filtra por 'hasta'
+      }
+    }
+  
+    const [casos, total] = await this.consultaRepository.findAndCount({
+      where: where,
+      relations: ['servicio', 'abogado'],
+      order: {
+        createdAt: 'DESC',
+      },
+      skip: skip, 
+      take: pageSize, 
+    });
+  
+    const totalPages = Math.ceil(total / pageSize);
+    return {
+      currentPage: Number(page),
+      totalPages: totalPages,
+      totalItems: total,
+      items: casos,
+    };
+  }
+  
 }
