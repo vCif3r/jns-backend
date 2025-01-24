@@ -26,12 +26,4 @@ export class ContactosService {
       where: { id: id },
     });
   }
-
-  update(id: number, updateContactoDto: UpdateContactoDto) {
-    return `This action updates a #${id} contacto`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} contacto`;
-  }
 }

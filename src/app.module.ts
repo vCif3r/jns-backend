@@ -20,6 +20,7 @@ import { Role } from './roles/entities/role.entity';
 import { AreasModule } from './areas/areas.module';
 import { ConfigModule } from '@nestjs/config';
 import { SuscripcionesModule } from './suscripciones/suscripciones.module';
+import { JwtStrategy } from './auth/jwt.strategy';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { SuscripcionesModule } from './suscripciones/suscripciones.module';
     SuscripcionesModule
   ],
   controllers: [AppController],
-  providers: [AppService, AuthService],
+  providers: [AppService, AuthService,JwtStrategy],
+  exports: [AuthService],
 })
 export class AppModule {}

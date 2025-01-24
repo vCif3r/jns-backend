@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Not, Repository } from 'typeorm';
+import { Like, Not, Repository } from 'typeorm';
 import { hash } from 'bcrypt';
+import { PaginationUserDto } from './dto/paginatio.dto';
 
 @Injectable()
 export class UsersService {
@@ -22,24 +23,48 @@ export class UsersService {
     return this.userRepository.save(newUser);
   }
 
-  findAll() {
-    return this.userRepository.find({
-      relations: ['role'],
-      where: {
-        role: {
-          nombre: Not('SuperAdmin')  // Excluir usuarios con el rol 'SuperAdmin'
-        }
-      },
-    });
+  // findAll() {
+  //   return this.userRepository.find({
+  //     relations: ['role'],
+  //     where: {
+  //       role: {
+  //         nombre: Not('SuperAdmin') 
+  //       }
+  //     },
+  //   });
+  // }
+
+  async findAll(getUsersDto: PaginationUserDto) {
+    const { page, pageSize, cedula } = getUsersDto;
+  
+    // Calculamos el offset según la página solicitada y el tamaño de página
+    const skip = (page - 1) * pageSize;
+  
+    // Empezamos a construir la consulta con createQueryBuilder
+    const queryBuilder = this.userRepository.createQueryBuilder('user')
+      .leftJoinAndSelect('user.role', 'role') // Unimos la relación de 'role'
+      .where('role.nombre != :role', { role: 'SuperAdmin' }); // Excluimos 'SuperAdmin'
+  
+    // Si se pasa una cédula, agregamos la condición para filtrar por cédula
+    if (cedula) {
+      queryBuilder.andWhere('user.cedula LIKE :cedula', { cedula: `%${cedula}%` });
+    }
+  
+    // Ejecutamos la consulta con paginación
+    const [users, total] = await queryBuilder
+      .skip(skip)
+      .take(pageSize)
+      .getManyAndCount();  // Usamos getManyAndCount para obtener tanto los resultados como el total de registros
+  
+    return {
+      users,
+      total,
+      page,
+      pageSize,
+      totalPages: Math.ceil(total / pageSize),
+    };
   }
 
-  findAllClientes(){
-    const clientes = this.userRepository.find({
-      relations: ['role'],
-      where: {role: {nombre: 'Cliente'}},
-    })
-    return clientes
-  }
 
   findAllAbogados(){
     const clientes = this.userRepository.find({
@@ -57,13 +82,13 @@ export class UsersService {
     return abogados
   }
 
-  findAllAdmin(){
-    const clientes = this.userRepository.find({
-      where: {role: {nombre: 'Admin'}},
-      relations: ['role'], 
-    })
-    return clientes
-  }
+  // findAllAdmin(){
+  //   const clientes = this.userRepository.find({
+  //     where: {role: {nombre: 'Admin'}},
+  //     relations: ['role'], 
+  //   })
+  //   return clientes
+  // }
 
   findOne(id: number) {
     return this.userRepository.findOne({ where: { id }, relations: ['role'],  });

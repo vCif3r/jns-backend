@@ -1,4 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, Put, UseInterceptors, UploadedFile } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Query,
+  Put,
+  UseInterceptors,
+  UploadedFile,
+} from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -6,25 +19,31 @@ import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { PaginationDto } from './dto/pagination.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
 
 @Controller('posts')
 export class PostsController {
-  constructor(
-    private readonly postsService: PostsService,
-  ) {}
+  constructor(private readonly postsService: PostsService) {}
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('Admin', 'SuperAdmin', 'Editor')
   @Post()
-  @UseInterceptors(FileInterceptor('image', { 
-    storage: diskStorage({
-      destination: './uploads', // Directorio donde se guardan las imágenes
-      filename: (req, file, callback) => {
-        const filename = `${Date.now()}-${file.originalname}`;
-        callback(null, filename);
-      },
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination: './uploads', // Directorio donde se guardan las imágenes
+        filename: (req, file, callback) => {
+          const filename = `${Date.now()}-${file.originalname}`;
+          callback(null, filename);
+        },
+      }),
     }),
-  }))
-  create(@Body() createPostDto: CreatePostDto,@UploadedFile() image: Express.Multer.File) {
+  )
+  create(
+    @Body() createPostDto: CreatePostDto,
+    @UploadedFile() image: Express.Multer.File,
+  ) {
     const imageUrl = image ? `/uploads/${image.filename}` : null;
 
     return this.postsService.create({
@@ -33,11 +52,12 @@ export class PostsController {
       categoria: createPostDto.categoria,
       resumen: createPostDto.resumen,
       imagen: imageUrl,
-      publicado: createPostDto.publicado
+      publicado: createPostDto.publicado,
     });
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('Admin', 'SuperAdmin', 'Editor')
   @Get()
   findAll(@Query() paginationDto: PaginationDto) {
     return this.postsService.findAll(paginationDto);
@@ -55,26 +75,31 @@ export class PostsController {
     return this.postsService.findPostPublicado(+id);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('Admin', 'SuperAdmin', 'Editor')
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.postsService.findOne(+id);
   }
 
-  @Put(':id')  // Usamos PUT para actualizar un post existente
-  @UseInterceptors(FileInterceptor('image', { 
-    storage: diskStorage({
-      destination: './uploads',  // Directorio donde se guardan las imágenes
-      filename: (req, file, callback) => {
-        const filename = `${Date.now()}-${file.originalname}`;
-        callback(null, filename);
-      },
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('Admin', 'SuperAdmin', 'Editor')
+  @Put(':id') // Usamos PUT para actualizar un post existente
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination: './uploads', // Directorio donde se guardan las imágenes
+        filename: (req, file, callback) => {
+          const filename = `${Date.now()}-${file.originalname}`;
+          callback(null, filename);
+        },
+      }),
     }),
-  }))
+  )
   async update(
-    @Param('id') id: any,  // ID del post a actualizar
-    @Body() updatePostDto: UpdatePostDto,  // Datos para actualizar
-    @UploadedFile() image: Express.Multer.File,  // Imagen (si es proporcionada)
+    @Param('id') id: any, // ID del post a actualizar
+    @Body() updatePostDto: UpdatePostDto, // Datos para actualizar
+    @UploadedFile() image: Express.Multer.File, // Imagen (si es proporcionada)
   ) {
     let imageUrl: string | null = null;
 
@@ -83,8 +108,8 @@ export class PostsController {
       imageUrl = `/uploads/${image.filename}`;
     } else {
       // Si no se proporciona una imagen, no cambiamos la imagen existente
-      const post = await this.postsService.findOne(+id);  // Obtenemos el post original para conservar su imagen
-      imageUrl = post.imagen;  // Usamos la imagen original del post
+      const post = await this.postsService.findOne(+id); // Obtenemos el post original para conservar su imagen
+      imageUrl = post.imagen; // Usamos la imagen original del post
     }
 
     // Actualizamos el post en la base de datos
@@ -93,11 +118,10 @@ export class PostsController {
       contenido: updatePostDto.contenido,
       categoria: updatePostDto.categoria,
       resumen: updatePostDto.resumen,
-      imagen: imageUrl,  // Imagen nueva o la original
-      publicado: updatePostDto.publicado
+      imagen: imageUrl, // Imagen nueva o la original
+      publicado: updatePostDto.publicado,
     });
   }
-
 
   // @UseGuards(AuthGuard)
   // @Patch(':id')
@@ -105,18 +129,20 @@ export class PostsController {
   //   return this.postsService.update(+id, updatePostDto);
   // }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('Admin', 'SuperAdmin', 'Editor')
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.postsService.remove(+id);
   }
 
-  @UseGuards(AuthGuard)
-    @Put('publicado/:id')
-    async actualizarPublicado(
-      @Param('id') id: number,
-      @Body() body: { publicado: boolean },
-    ): Promise<any> {
-      return this.postsService.actualizarPublicado(id, body.publicado);
-    }
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('Admin', 'SuperAdmin', 'Editor')
+  @Put('publicado/:id')
+  async actualizarPublicado(
+    @Param('id') id: number,
+    @Body() body: { publicado: boolean },
+  ): Promise<any> {
+    return this.postsService.actualizarPublicado(id, body.publicado);
+  }
 }

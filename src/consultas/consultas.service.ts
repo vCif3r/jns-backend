@@ -38,9 +38,7 @@ export class ConsultasService {
     });
   }
 
-  update(id: number, updateConsultaDto: UpdateConsultaDto) {
-    return `This action updates a #${id} consulta`;
-  }
+ 
 
   remove(id: number) {
     return this.consultaRepository.delete(id);

@@ -57,6 +57,12 @@ export class AuthService {
     return this.userRepository.save(user);
   }
 
+  async validateUser(userId: number): Promise<User | null> {
+    return this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['role'], 
+    });
+  }
 
   async registerAdmin(userObject: RegisterAdminDto) {
     const { password } = userObject;

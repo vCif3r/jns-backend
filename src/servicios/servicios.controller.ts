@@ -3,19 +3,23 @@ import { ServiciosService } from './servicios.service';
 import { CreateServicioDto } from './dto/create-servicio.dto';
 import { UpdateServicioDto } from './dto/update-servicio.dto';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 
 @Controller('servicios')
 export class ServiciosController {
   constructor(private readonly serviciosService: ServiciosService) {}
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('Admin','SuperAdmin')
   @Post()
   create(@Body() createServicioDto: CreateServicioDto) {
     return this.serviciosService.create(createServicioDto);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('Admin','SuperAdmin')
   @Get()
   findAll() {
     return this.serviciosService.findAll();
@@ -51,13 +55,15 @@ export class ServiciosController {
     return this.serviciosService.findOnePublicado(+id);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('Admin','SuperAdmin')
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateServicioDto: UpdateServicioDto) {
     return this.serviciosService.update(+id, updateServicioDto);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('Admin','SuperAdmin')
   @Put('publicado/:id')
   async actualizarPublicado(
     @Param('id') id: number,
@@ -65,7 +71,8 @@ export class ServiciosController {
   ): Promise<any> {
     return this.serviciosService.actualizarPublicado(id, body.publicado);
   }
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('Admin','SuperAdmin')
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.serviciosService.remove(+id);
