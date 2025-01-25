@@ -12,8 +12,8 @@ import { AuthGuard } from './guards/auth.guard';
     TypeOrmModule.forFeature([User, Role]),
     JwtModule.register({
       global: true,
-      secret: 'secretKey',
-      signOptions: { expiresIn: '24h' },
+      secret: process.env.SECRET_KEY,
+      signOptions: { expiresIn: '12h' },
     }),
   ],
   controllers: [AuthController],
