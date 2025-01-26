@@ -129,26 +129,10 @@ export class CasosService {
   async findByCodigoAndEmail(codigo: string, email: string) {
     const caso = await this.casoRepository.findOne({
       relations: ['consulta'],
-      where: { consulta: { email: email } },
+      where: { consulta: { email: email }, codigo: codigo },
     });
 
-    if (!caso)
-      throw new HttpException(
-        'Caso no encontrado con el correo ingresado',
-        HttpStatus.NOT_FOUND,
-      );
-
-    let codigoEncontrado = false;
-    if (caso.codigo === codigo) {
-      codigoEncontrado = true;
-    }
-
-    if (!codigoEncontrado)
-      throw new HttpException(
-        'El código de caso no coincide con el ingresado',
-        HttpStatus.NOT_FOUND,
-      );
-
+    if (!caso) throw new HttpException('Caso no encontrado, correo o código ingresado no coinciden',HttpStatus.NOT_FOUND);
     return caso;
   }
 

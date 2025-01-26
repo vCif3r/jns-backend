@@ -15,12 +15,12 @@ import { AuthGuard } from './guards/auth.guard';
 export class AuthService {
   constructor(
     @InjectRepository(User)
-    private userRepository: Repository<User>,
+    private readonly userRepository: Repository<User>,
 
     @InjectRepository(Role)
-    private roleRepository: Repository<Role>,
+    private readonly roleRepository: Repository<Role>,
 
-    private jwtService: JwtService,
+    private readonly jwtService: JwtService,
   ) { }
 
   async registerCliente(userObject: RegisterClienteDto) {

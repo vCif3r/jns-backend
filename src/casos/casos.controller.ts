@@ -82,6 +82,8 @@ export class CasosController {
     }
     return this.casosService.findAllByAbogado(+idAbogado, paginationDto);
   }
+
+  
   //public
   @Post('codigo-email')
   findByCodigoAndEmail(@Body() data: any) {

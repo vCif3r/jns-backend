@@ -21,6 +21,8 @@ import { AreasModule } from './areas/areas.module';
 import { ConfigModule } from '@nestjs/config';
 import { SuscripcionesModule } from './suscripciones/suscripciones.module';
 import { JwtStrategy } from './auth/jwt.strategy';
+import { JwtService } from '@nestjs/jwt';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -51,12 +53,12 @@ import { JwtStrategy } from './auth/jwt.strategy';
       rootPath: join(__dirname, '..', 'uploads'), // El directorio donde se guardan las imágenes
       serveRoot: '/uploads',
     }),
-    TypeOrmModule.forFeature([User, Role]),
     AreasModule,
-    SuscripcionesModule
+    SuscripcionesModule,
+    CloudinaryModule
   ],
   controllers: [AppController],
-  providers: [AppService, AuthService,JwtStrategy],
-  exports: [AuthService],
+  providers: [AppService],
+  exports: [],
 })
 export class AppModule {}

@@ -21,37 +21,34 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Controller('posts')
 export class PostsController {
-  constructor(private readonly postsService: PostsService) {}
+  constructor(
+    private readonly postsService: PostsService,
+    private readonly imageService: CloudinaryService
+  ) { }
 
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('Admin', 'SuperAdmin', 'Editor')
   @Post()
-  @UseInterceptors(
-    FileInterceptor('image', {
-      storage: diskStorage({
-        destination: './uploads', // Directorio donde se guardan las imágenes
-        filename: (req, file, callback) => {
-          const filename = `${Date.now()}-${file.originalname}`;
-          callback(null, filename);
-        },
-      }),
-    }),
-  )
-  create(
+  @UseInterceptors(FileInterceptor('image'))
+  async create(
     @Body() createPostDto: CreatePostDto,
     @UploadedFile() image: Express.Multer.File,
   ) {
-    const imageUrl = image ? `/uploads/${image.filename}` : null;
-
+    let imageUrl = null;
+    if (image) {
+      imageUrl = await this.imageService.uploadFile(image);  // Obtén la URL de Cloudinary
+    }
+    // Guardamos el post en la base de datos, junto con la URL de la imagen
     return this.postsService.create({
       titulo: createPostDto.titulo,
       contenido: createPostDto.contenido,
       categoria: createPostDto.categoria,
       resumen: createPostDto.resumen,
-      imagen: imageUrl,
+      imagen: imageUrl.url,
       publicado: createPostDto.publicado,
     });
   }
@@ -85,49 +82,34 @@ export class PostsController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('Admin', 'SuperAdmin', 'Editor')
   @Put(':id') // Usamos PUT para actualizar un post existente
-  @UseInterceptors(
-    FileInterceptor('image', {
-      storage: diskStorage({
-        destination: './uploads', // Directorio donde se guardan las imágenes
-        filename: (req, file, callback) => {
-          const filename = `${Date.now()}-${file.originalname}`;
-          callback(null, filename);
-        },
-      }),
-    }),
-  )
+  @UseInterceptors(FileInterceptor('image'))
   async update(
     @Param('id') id: any, // ID del post a actualizar
     @Body() updatePostDto: UpdatePostDto, // Datos para actualizar
     @UploadedFile() image: Express.Multer.File, // Imagen (si es proporcionada)
   ) {
-    let imageUrl: string | null = null;
-
-    // Si se proporciona una imagen nueva, se guarda la nueva URL de la imagen
+    let imageUrl = null;
     if (image) {
-      imageUrl = `/uploads/${image.filename}`;
+      try {
+        imageUrl = await this.imageService.uploadFile(image);
+      } catch (error) {
+        throw new Error('Error al subir la imagen a Cloudinary');
+      }
     } else {
-      // Si no se proporciona una imagen, no cambiamos la imagen existente
-      const post = await this.postsService.findOne(+id); // Obtenemos el post original para conservar su imagen
+      const post = await this.postsService.findOne(+id); // Obtenemos el post original
       imageUrl = post.imagen; // Usamos la imagen original del post
     }
 
-    // Actualizamos el post en la base de datos
+    // Actualizamos el post en la base de datos, ya sea con la nueva URL de la imagen o la original
     return this.postsService.update(id, {
       titulo: updatePostDto.titulo,
       contenido: updatePostDto.contenido,
       categoria: updatePostDto.categoria,
       resumen: updatePostDto.resumen,
-      imagen: imageUrl, // Imagen nueva o la original
+      imagen: imageUrl.url,
       publicado: updatePostDto.publicado,
     });
   }
-
-  // @UseGuards(AuthGuard)
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-  //   return this.postsService.update(+id, updatePostDto);
-  // }
 
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('Admin', 'SuperAdmin', 'Editor')
